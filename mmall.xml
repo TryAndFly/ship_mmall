@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="mmall" default="all">
+  
+  
+  <property file="mmall.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8_(1)" value="${jdk.home.1.8_(1)}/bin"/>
+  <path id="jdk.classpath.1.8_(1)">
+    <fileset dir="${jdk.home.1.8_(1)}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/access-bridge-64.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8_(1)}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8_(1)}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8_(1)"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.maven:_aopalliance:aopalliance:1.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_ch.qos.logback:logback-classic:1.1.2.classpath">
+    <pathelement location="${path.variable.maven_repository}/ch/qos/logback/logback-classic/1.1.2/logback-classic-1.1.2.jar"/>
+  </path>
+  
+  <path id="library.maven:_ch.qos.logback:logback-core:1.1.2.classpath">
+    <pathelement location="${path.variable.maven_repository}/ch/qos/logback/logback-core/1.1.2/logback-core-1.1.2.jar"/>
+  </path>
+  
+  <path id="library.maven:_com.github.jsqlparser:jsqlparser:0.9.4.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/github/jsqlparser/jsqlparser/0.9.4/jsqlparser-0.9.4.jar"/>
+  </path>
+  
+  <path id="library.maven:_com.github.miemiedev:mybatis-paginator:1.2.17.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/github/miemiedev/mybatis-paginator/1.2.17/mybatis-paginator-1.2.17.jar"/>
+  </path>
+  
+  <path id="library.maven:_com.github.pagehelper:pagehelper:4.1.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/github/pagehelper/pagehelper/4.1.0/pagehelper-4.1.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_com.google.code.gson:gson:2.3.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/google/code/gson/gson/2.3.1/gson-2.3.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_com.google.guava:guava:20.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/google/guava/guava/20.0/guava-20.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_com.google.zxing:core:2.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/google/zxing/core/2.1/core-2.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-codec:commons-codec:1.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-collections:commons-collections:3.2.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-configuration:commons-configuration:1.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-configuration/commons-configuration/1.10/commons-configuration-1.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-fileupload:commons-fileupload:1.2.2.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-fileupload/commons-fileupload/1.2.2/commons-fileupload-1.2.2.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-io:commons-io:2.0.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-lang:commons-lang:2.6.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-logging:commons-logging:1.1.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-net:commons-net:3.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-net/commons-net/3.1/commons-net-3.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-pool:commons-pool:1.5.4.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-pool/commons-pool/1.5.4/commons-pool-1.5.4.jar"/>
+  </path>
+  
+  <path id="library.maven:_joda-time:joda-time:2.3.classpath">
+    <pathelement location="${path.variable.maven_repository}/joda-time/joda-time/2.3/joda-time-2.3.jar"/>
+  </path>
+  
+  <path id="library.maven:_junit:junit:4.12.classpath">
+    <pathelement location="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar"/>
+  </path>
+  
+  <path id="library.maven:_mysql:mysql-connector-java:8.0.9-rc.classpath">
+    <pathelement location="${path.variable.maven_repository}/mysql/mysql-connector-java/8.0.9-rc/mysql-connector-java-8.0.9-rc.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.commons:commons-lang3:3.5.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.commons:commons-pool2:2.4.2.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.tomcat:tomcat-servlet-api:8.0.47.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/tomcat/tomcat-servlet-api/8.0.47/tomcat-servlet-api-8.0.47.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.aspectj:aspectjrt:1.6.11.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/aspectj/aspectjrt/1.6.11/aspectjrt-1.6.11.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.aspectj:aspectjweaver:1.7.3.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/aspectj/aspectjweaver/1.7.3/aspectjweaver-1.7.3.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.12.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/codehaus/jackson/jackson-core-asl/1.9.12/jackson-core-asl-1.9.12.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.12.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/codehaus/jackson/jackson-mapper-asl/1.9.12/jackson-mapper-asl-1.9.12.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.hashids:hashids:1.0.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/hashids/hashids/1.0.1/hashids-1.0.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.mybatis:mybatis-spring:1.3.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/mybatis/mybatis-spring/1.3.0/mybatis-spring-1.3.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.mybatis:mybatis:3.4.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/mybatis/mybatis/3.4.1/mybatis-3.4.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.slf4j:slf4j-api:1.7.6.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.6/slf4j-api-1.7.6.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-aop:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-beans:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-context:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-core:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-expression:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-expression/4.0.0.RELEASE/spring-expression-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-jdbc:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-oxm:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-oxm/4.0.0.RELEASE/spring-oxm-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-test:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-test/4.0.0.RELEASE/spring-test-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-tx:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-web:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.springframework:spring-webmvc:4.0.0.release.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE.jar"/>
+  </path>
+  
+  <path id="library.maven:_redis.clients:jedis:2.9.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/redis/clients/jedis/2.9.0/jedis-2.9.0.jar"/>
+  </path>
+  
+  
+  <!-- Application Server Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <fileset dir="${javac2.home}">
+      <include name="javac2.jar"/>
+      <include name="jdom.jar"/>
+      <include name="asm-all*.jar"/>
+      <include name="jgoodies-forms.jar"/>
+    </fileset>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  <import file="${basedir}/module_mmall.xml"/>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.mmall, clean.artifact.mmall:war_exploded" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.mmall" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.mmall:war" value="${basedir}/target"/>
+    <property name="artifact.output.mmall:war_exploded" value="${basedir}/target/mmall"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.mmall.war" value="${artifacts.temp.dir}/mmall.war"/>
+    <property name="temp.jar.path.mmall-1.0-SNAPSHOT.jar" value="${artifacts.temp.dir}/mmall-1.0-SNAPSHOT.jar"/>
+  </target>
+  
+  <target name="clean.artifact.mmall:war_exploded" description="clean mmall:war exploded artifact output">
+    <delete dir="${artifact.output.mmall:war_exploded}"/>
+  </target>
+  
+  <target name="artifact.mmall:war" depends="init.artifacts, artifact.mmall:war_exploded" description="Build &#39;mmall:war&#39; artifact">
+    <property name="artifact.temp.output.mmall:war" value="${artifacts.temp.dir}/mmall_war"/>
+    <mkdir dir="${artifact.temp.output.mmall:war}"/>
+    <zip destfile="${temp.jar.path.mmall.war}">
+      <zipfileset dir="${artifact.output.mmall:war_exploded}"/>
+    </zip>
+    <copy file="${temp.jar.path.mmall.war}" tofile="${artifact.temp.output.mmall:war}/mmall.war"/>
+  </target>
+  
+  <target name="artifact.mmall:war_exploded" depends="init.artifacts, compile.module.mmall, compile.module.mmall" description="Build &#39;mmall:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.mmall:war_exploded}"/>
+    <jar destfile="${temp.jar.path.mmall-1.0-SNAPSHOT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${mmall.output.dir}"/>
+    </jar>
+    <mkdir dir="${artifact.output.mmall:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.mmall:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.mmall:war_exploded}/WEB-INF/classes">
+      <fileset dir="${mmall.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.mmall:war_exploded}/WEB-INF/lib"/>
+    <copy file="${path.variable.maven_repository}/org/apache/tomcat/tomcat-servlet-api/8.0.47/tomcat-servlet-api-8.0.47.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/tomcat-servlet-api-8.0.47.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-webmvc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-beans-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-context-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-aop-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-core-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-expression/4.0.0.RELEASE/spring-expression-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-expression-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-web-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-oxm/4.0.0.RELEASE/spring-oxm-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-oxm-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-jdbc-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-tx-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/aopalliance-1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/springframework/spring-test/4.0.0.RELEASE/spring-test-4.0.0.RELEASE.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/spring-test-4.0.0.RELEASE.jar"/>
+    <copy file="${path.variable.maven_repository}/org/aspectj/aspectjweaver/1.7.3/aspectjweaver-1.7.3.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/aspectjweaver-1.7.3.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis-spring/1.3.0/mybatis-spring-1.3.0.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/mybatis-spring-1.3.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/mybatis/mybatis/3.4.1/mybatis-3.4.1.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/mybatis-3.4.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/aspectj/aspectjrt/1.6.11/aspectjrt-1.6.11.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/aspectjrt-1.6.11.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-mapper-asl/1.9.12/jackson-mapper-asl-1.9.12.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/jackson-mapper-asl-1.9.12.jar"/>
+    <copy file="${path.variable.maven_repository}/org/codehaus/jackson/jackson-core-asl/1.9.12/jackson-core-asl-1.9.12.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/jackson-core-asl-1.9.12.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-dbcp-1.4.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-pool/commons-pool/1.5.4/commons-pool-1.5.4.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-pool-1.5.4.jar"/>
+    <copy file="${path.variable.maven_repository}/ch/qos/logback/logback-classic/1.1.2/logback-classic-1.1.2.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/logback-classic-1.1.2.jar"/>
+    <copy file="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.7.6/slf4j-api-1.7.6.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/slf4j-api-1.7.6.jar"/>
+    <copy file="${path.variable.maven_repository}/ch/qos/logback/logback-core/1.1.2/logback-core-1.1.2.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/logback-core-1.1.2.jar"/>
+    <copy file="${path.variable.maven_repository}/mysql/mysql-connector-java/8.0.9-rc/mysql-connector-java-8.0.9-rc.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/mysql-connector-java-8.0.9-rc.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/guava/guava/20.0/guava-20.0.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/guava-20.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-lang3-3.5.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+    <copy file="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/junit-4.12.jar"/>
+    <copy file="${path.variable.maven_repository}/joda-time/joda-time/2.3/joda-time-2.3.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/joda-time-2.3.jar"/>
+    <copy file="${path.variable.maven_repository}/org/hashids/hashids/1.0.1/hashids-1.0.1.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/hashids-1.0.1.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-net/commons-net/3.1/commons-net-3.1.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-net-3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-fileupload/commons-fileupload/1.2.2/commons-fileupload-1.2.2.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-io-2.0.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/pagehelper/pagehelper/4.1.0/pagehelper-4.1.0.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/pagehelper-4.1.0.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/miemiedev/mybatis-paginator/1.2.17/mybatis-paginator-1.2.17.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/mybatis-paginator-1.2.17.jar"/>
+    <copy file="${path.variable.maven_repository}/com/github/jsqlparser/jsqlparser/0.9.4/jsqlparser-0.9.4.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/jsqlparser-0.9.4.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-codec-1.10.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-configuration/commons-configuration/1.10/commons-configuration-1.10.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-configuration-1.10.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-lang-2.6.jar"/>
+    <copy file="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/zxing/core/2.1/core-2.1.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/core-2.1.jar"/>
+    <copy file="${path.variable.maven_repository}/com/google/code/gson/gson/2.3.1/gson-2.3.1.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/gson-2.3.1.jar"/>
+    <copy file="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+    <copy file="${path.variable.maven_repository}/redis/clients/jedis/2.9.0/jedis-2.9.0.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/jedis-2.9.0.jar"/>
+    <copy file="${path.variable.maven_repository}/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
+    <copy file="${temp.jar.path.mmall-1.0-SNAPSHOT.jar}" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/lib/mmall-1.0-SNAPSHOT.jar"/>
+    <mkdir dir="${artifact.output.mmall:war_exploded}/META-INF"/>
+    <copy file="${basedir}/target/mmall/META-INF/MANIFEST.MF" tofile="${artifact.output.mmall:war_exploded}/META-INF/MANIFEST.MF"/>
+    <copy todir="${artifact.output.mmall:war_exploded}">
+      <fileset dir="${basedir}/src/main/webapp"/>
+    </copy>
+    <mkdir dir="${artifact.output.mmall:war_exploded}/WEB-INF"/>
+    <copy file="${basedir}/src/main/webapp/WEB-INF/web.xml" tofile="${artifact.output.mmall:war_exploded}/WEB-INF/web.xml"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.mmall:war, artifact.mmall:war_exploded" description="Build all artifacts">
+    <mkdir dir="${artifact.output.mmall:war}"/>
+    <copy todir="${artifact.output.mmall:war}">
+      <fileset dir="${artifact.temp.output.mmall:war}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

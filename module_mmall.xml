@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_mmall" default="compile.module.mmall">
+  <dirname property="module.mmall.basedir" file="${ant.file.module_mmall}"/>
+  
+  <property name="module.jdk.home.mmall" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.mmall" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.mmall" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.mmall" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="mmall.output.dir" value="${module.mmall.basedir}/target/classes"/>
+  <property name="mmall.testoutput.dir" value="${module.mmall.basedir}/target/test-classes"/>
+  
+  <path id="mmall.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="mmall.module.production.classpath">
+    <path refid="${module.jdk.classpath.mmall}"/>
+    <pathelement location="${basedir}/src/main/webapp/lib/alipay-sdk-java20161213173952.jar"/>
+    <pathelement location="${basedir}/src/main/webapp/lib/alipay-trade-sdk-20161215.jar"/>
+    <path refid="library.maven:_org.apache.tomcat:tomcat-servlet-api:8.0.47.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-webmvc:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-beans:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aop:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-expression:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-web:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-oxm:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-jdbc:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-tx:4.0.0.release.classpath"/>
+    <path refid="library.maven:_aopalliance:aopalliance:1.0.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjweaver:1.7.3.classpath"/>
+    <path refid="library.maven:_org.mybatis:mybatis-spring:1.3.0.classpath"/>
+    <path refid="library.maven:_org.mybatis:mybatis:3.4.1.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjrt:1.6.11.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.12.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.12.classpath"/>
+    <path refid="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath"/>
+    <path refid="library.maven:_commons-pool:commons-pool:1.5.4.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-classic:1.1.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.6.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-core:1.1.2.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:20.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.5.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
+    <path refid="library.maven:_junit:junit:4.12.classpath"/>
+    <path refid="library.maven:_joda-time:joda-time:2.3.classpath"/>
+    <path refid="library.maven:_org.hashids:hashids:1.0.1.classpath"/>
+    <path refid="library.maven:_commons-net:commons-net:3.1.classpath"/>
+    <path refid="library.maven:_commons-fileupload:commons-fileupload:1.2.2.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.0.1.classpath"/>
+    <path refid="library.maven:_com.github.pagehelper:pagehelper:4.1.0.classpath"/>
+    <path refid="library.maven:_com.github.miemiedev:mybatis-paginator:1.2.17.classpath"/>
+    <path refid="library.maven:_com.github.jsqlparser:jsqlparser:0.9.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_commons-configuration:commons-configuration:1.10.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
+    <path refid="library.maven:_com.google.zxing:core:2.1.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.maven:_redis.clients:jedis:2.9.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-pool2:2.4.2.classpath"/>
+    <pathelement location="${basedir}/src/main/webapp/WEB-INF/lib/alipay-sdk-java20161213173952.jar"/>
+    <pathelement location="${basedir}/src/main/webapp/WEB-INF/lib/alipay-trade-sdk-20161215.jar"/>
+  </path>
+  
+  <path id="mmall.runtime.production.module.classpath">
+    <pathelement location="${mmall.output.dir}"/>
+    <pathelement location="${basedir}/src/main/webapp/lib/alipay-sdk-java20161213173952.jar"/>
+    <pathelement location="${basedir}/src/main/webapp/lib/alipay-trade-sdk-20161215.jar"/>
+    <path refid="library.maven:_org.apache.tomcat:tomcat-servlet-api:8.0.47.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-webmvc:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-beans:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aop:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-expression:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-web:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-oxm:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-jdbc:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-tx:4.0.0.release.classpath"/>
+    <path refid="library.maven:_aopalliance:aopalliance:1.0.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjweaver:1.7.3.classpath"/>
+    <path refid="library.maven:_org.mybatis:mybatis-spring:1.3.0.classpath"/>
+    <path refid="library.maven:_org.mybatis:mybatis:3.4.1.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjrt:1.6.11.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.12.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.12.classpath"/>
+    <path refid="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath"/>
+    <path refid="library.maven:_commons-pool:commons-pool:1.5.4.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-classic:1.1.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.6.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-core:1.1.2.classpath"/>
+    <path refid="library.maven:_mysql:mysql-connector-java:8.0.9-rc.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:20.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.5.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
+    <path refid="library.maven:_junit:junit:4.12.classpath"/>
+    <path refid="library.maven:_joda-time:joda-time:2.3.classpath"/>
+    <path refid="library.maven:_org.hashids:hashids:1.0.1.classpath"/>
+    <path refid="library.maven:_commons-net:commons-net:3.1.classpath"/>
+    <path refid="library.maven:_commons-fileupload:commons-fileupload:1.2.2.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.0.1.classpath"/>
+    <path refid="library.maven:_com.github.pagehelper:pagehelper:4.1.0.classpath"/>
+    <path refid="library.maven:_com.github.miemiedev:mybatis-paginator:1.2.17.classpath"/>
+    <path refid="library.maven:_com.github.jsqlparser:jsqlparser:0.9.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_commons-configuration:commons-configuration:1.10.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
+    <path refid="library.maven:_com.google.zxing:core:2.1.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.maven:_redis.clients:jedis:2.9.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-pool2:2.4.2.classpath"/>
+    <pathelement location="${basedir}/src/main/webapp/WEB-INF/lib/alipay-sdk-java20161213173952.jar"/>
+    <pathelement location="${basedir}/src/main/webapp/WEB-INF/lib/alipay-trade-sdk-20161215.jar"/>
+  </path>
+  
+  <path id="mmall.module.classpath">
+    <path refid="${module.jdk.classpath.mmall}"/>
+    <pathelement location="${mmall.output.dir}"/>
+    <pathelement location="${basedir}/src/main/webapp/lib/alipay-sdk-java20161213173952.jar"/>
+    <pathelement location="${basedir}/src/main/webapp/lib/alipay-trade-sdk-20161215.jar"/>
+    <path refid="library.maven:_org.apache.tomcat:tomcat-servlet-api:8.0.47.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-webmvc:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-beans:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aop:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-expression:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-web:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-oxm:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-jdbc:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-tx:4.0.0.release.classpath"/>
+    <path refid="library.maven:_aopalliance:aopalliance:1.0.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjweaver:1.7.3.classpath"/>
+    <path refid="library.maven:_org.mybatis:mybatis-spring:1.3.0.classpath"/>
+    <path refid="library.maven:_org.mybatis:mybatis:3.4.1.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjrt:1.6.11.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.12.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.12.classpath"/>
+    <path refid="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath"/>
+    <path refid="library.maven:_commons-pool:commons-pool:1.5.4.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-classic:1.1.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.6.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-core:1.1.2.classpath"/>
+    <path refid="library.maven:_mysql:mysql-connector-java:8.0.9-rc.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:20.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.5.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
+    <path refid="library.maven:_junit:junit:4.12.classpath"/>
+    <path refid="library.maven:_joda-time:joda-time:2.3.classpath"/>
+    <path refid="library.maven:_org.hashids:hashids:1.0.1.classpath"/>
+    <path refid="library.maven:_commons-net:commons-net:3.1.classpath"/>
+    <path refid="library.maven:_commons-fileupload:commons-fileupload:1.2.2.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.0.1.classpath"/>
+    <path refid="library.maven:_com.github.pagehelper:pagehelper:4.1.0.classpath"/>
+    <path refid="library.maven:_com.github.miemiedev:mybatis-paginator:1.2.17.classpath"/>
+    <path refid="library.maven:_com.github.jsqlparser:jsqlparser:0.9.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_commons-configuration:commons-configuration:1.10.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
+    <path refid="library.maven:_com.google.zxing:core:2.1.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.maven:_redis.clients:jedis:2.9.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-pool2:2.4.2.classpath"/>
+    <pathelement location="${basedir}/src/main/webapp/WEB-INF/lib/alipay-sdk-java20161213173952.jar"/>
+    <pathelement location="${basedir}/src/main/webapp/WEB-INF/lib/alipay-trade-sdk-20161215.jar"/>
+  </path>
+  
+  <path id="mmall.runtime.module.classpath">
+    <pathelement location="${mmall.testoutput.dir}"/>
+    <pathelement location="${mmall.output.dir}"/>
+    <pathelement location="${basedir}/src/main/webapp/lib/alipay-sdk-java20161213173952.jar"/>
+    <pathelement location="${basedir}/src/main/webapp/lib/alipay-trade-sdk-20161215.jar"/>
+    <path refid="library.maven:_org.apache.tomcat:tomcat-servlet-api:8.0.47.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-webmvc:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-beans:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aop:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-expression:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-web:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-oxm:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-jdbc:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-tx:4.0.0.release.classpath"/>
+    <path refid="library.maven:_aopalliance:aopalliance:1.0.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.0.0.release.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjweaver:1.7.3.classpath"/>
+    <path refid="library.maven:_org.mybatis:mybatis-spring:1.3.0.classpath"/>
+    <path refid="library.maven:_org.mybatis:mybatis:3.4.1.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjrt:1.6.11.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.12.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.12.classpath"/>
+    <path refid="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath"/>
+    <path refid="library.maven:_commons-pool:commons-pool:1.5.4.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-classic:1.1.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.6.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-core:1.1.2.classpath"/>
+    <path refid="library.maven:_mysql:mysql-connector-java:8.0.9-rc.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:20.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.5.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
+    <path refid="library.maven:_junit:junit:4.12.classpath"/>
+    <path refid="library.maven:_joda-time:joda-time:2.3.classpath"/>
+    <path refid="library.maven:_org.hashids:hashids:1.0.1.classpath"/>
+    <path refid="library.maven:_commons-net:commons-net:3.1.classpath"/>
+    <path refid="library.maven:_commons-fileupload:commons-fileupload:1.2.2.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.0.1.classpath"/>
+    <path refid="library.maven:_com.github.pagehelper:pagehelper:4.1.0.classpath"/>
+    <path refid="library.maven:_com.github.miemiedev:mybatis-paginator:1.2.17.classpath"/>
+    <path refid="library.maven:_com.github.jsqlparser:jsqlparser:0.9.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_commons-configuration:commons-configuration:1.10.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
+    <path refid="library.maven:_com.google.zxing:core:2.1.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.maven:_redis.clients:jedis:2.9.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-pool2:2.4.2.classpath"/>
+    <pathelement location="${basedir}/src/main/webapp/WEB-INF/lib/alipay-sdk-java20161213173952.jar"/>
+    <pathelement location="${basedir}/src/main/webapp/WEB-INF/lib/alipay-trade-sdk-20161215.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.mmall">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.mmall">
+    <patternset refid="excluded.from.module.mmall"/>
+  </patternset>
+  
+  <path id="mmall.module.sourcepath">
+    <dirset dir="${module.mmall.basedir}">
+      <include name="src/main/resources"/>
+      <include name="src/main/java"/>
+    </dirset>
+  </path>
+  
+  <path id="mmall.module.test.sourcepath">
+    <dirset dir="${module.mmall.basedir}">
+      <include name="src/test/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.mmall" depends="compile.module.mmall.production,compile.module.mmall.tests" description="Compile module mmall"/>
+  
+  <target name="compile.module.mmall.production" depends="register.custom.compilers" description="Compile module mmall; production classes">
+    <mkdir dir="${mmall.output.dir}"/>
+    <javac2 destdir="${mmall.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mmall}/javac">
+      <compilerarg line="${compiler.args.mmall}"/>
+      <bootclasspath refid="mmall.module.bootclasspath"/>
+      <classpath refid="mmall.module.production.classpath"/>
+      <src refid="mmall.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mmall"/>
+    </javac2>
+    
+    <copy todir="${mmall.output.dir}">
+      <fileset dir="${module.mmall.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.mmall.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.mmall.tests" depends="register.custom.compilers,compile.module.mmall.production" description="compile module mmall; test classes" unless="skip.tests">
+    <mkdir dir="${mmall.testoutput.dir}"/>
+    <javac2 destdir="${mmall.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mmall}/javac">
+      <compilerarg line="${compiler.args.mmall}"/>
+      <bootclasspath refid="mmall.module.bootclasspath"/>
+      <classpath refid="mmall.module.classpath"/>
+      <src refid="mmall.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mmall"/>
+    </javac2>
+    
+    <copy todir="${mmall.testoutput.dir}">
+      <fileset dir="${module.mmall.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.mmall" description="cleanup module">
+    <delete dir="${mmall.output.dir}"/>
+    <delete dir="${mmall.testoutput.dir}"/>
+  </target>
+</project>
