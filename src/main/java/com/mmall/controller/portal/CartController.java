@@ -69,8 +69,9 @@ public class CartController {
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.selectOrUnSelect(user.getId(), null,Const.Cart.CHECKED);
+        return iCartService.selectOrUnSelect(user.getId(), null, Const.Cart.CHECKED);
     }
+
     //全反选
     @RequestMapping("un_select_all.do")
     @ResponseBody
@@ -79,29 +80,31 @@ public class CartController {
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.selectOrUnSelect(user.getId(),null, Const.Cart.UNCHECKED);
+        return iCartService.selectOrUnSelect(user.getId(), null, Const.Cart.UNCHECKED);
     }
 
     //单独选
     @RequestMapping("select.do")
     @ResponseBody
-    public ServerResponse<CartVo> select(HttpSession httpSession,Integer productId) {
+    public ServerResponse<CartVo> select(HttpSession httpSession, Integer productId) {
         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.selectOrUnSelect(user.getId(),productId, Const.Cart.CHECKED);
+        return iCartService.selectOrUnSelect(user.getId(), productId, Const.Cart.CHECKED);
     }
+
     //单独反选
     @RequestMapping("un_select.do")
     @ResponseBody
-    public ServerResponse<CartVo> unSelect(HttpSession httpSession,Integer productId) {
+    public ServerResponse<CartVo> unSelect(HttpSession httpSession, Integer productId) {
         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.selectOrUnSelect(user.getId(),productId, Const.Cart.UNCHECKED);
+        return iCartService.selectOrUnSelect(user.getId(), productId, Const.Cart.UNCHECKED);
     }
+
     //查询当前用户的购物车的产品数量,如果产品有十个数量就是10，
     @RequestMapping("get_cart_product_count.do")
     @ResponseBody

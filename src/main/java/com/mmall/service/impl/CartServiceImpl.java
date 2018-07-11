@@ -14,19 +14,18 @@ import com.mmall.util.BigDecimalUtil;
 import com.mmall.util.PropertiesUtil;
 import com.mmall.vo.CartProductVo;
 import com.mmall.vo.CartVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Slf4j
 @Service("iCartService")
 public class CartServiceImpl implements ICartService {
 
-    private Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
 
     @Autowired
     private CartMapper cartMapper;
@@ -168,7 +167,7 @@ public class CartServiceImpl implements ICartService {
                 } else {
                     //product未查找到，需要确认productId是否存在问题？会使得后续的cartProductVo部分填充为null
                     //这里可以手动抛出异常，调用方法收到异常后提示productId存在问题
-                    logger.info("使用productId未搜索到该产品", cartItem.getProductId());
+                    log.info("使用productId未搜索到该产品", cartItem.getProductId());
                     cartProductVo.setProductTotalPrice(new BigDecimal("0"));
                 }
 

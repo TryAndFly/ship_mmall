@@ -49,11 +49,12 @@ public class ShippingController {
         return iShippingService.update(user.getId(), shipping);
 
     }
+
     @RequestMapping("test.do")
     @ResponseBody
     public ServerResponse test(HttpServletRequest request) {
         System.out.println("支付宝回调");
-        return ServerResponse.createBySuccess("测试访问通道"+request.getParameterMap().toString());
+        return ServerResponse.createBySuccess("测试访问通道" + request.getParameterMap().toString());
 
     }
 

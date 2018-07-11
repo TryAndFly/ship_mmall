@@ -22,6 +22,7 @@ public class UserController {
 
     /**
      * 用户注册
+     *
      * @param username
      * @param password
      * @param httpSession
@@ -41,6 +42,7 @@ public class UserController {
 
     /**
      * 退出登录
+     *
      * @param httpSession
      * @return
      */
@@ -54,15 +56,16 @@ public class UserController {
     /**
      * 注册
      * username,password,email,phone,question,answer
+     *
      * @param
      * @return
      */
     @RequestMapping(value = "register.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> register(String username,String password,String email,
-                                           String phone,String question,String answer) {
+    public ServerResponse<String> register(String username, String password, String email,
+                                           String phone, String question, String answer) {
 
-        User user = new User(username,password,email,phone,question,answer);
+        User user = new User(username, password, email, phone, question, answer);
         return iUserService.register(user);
     }
 
@@ -70,6 +73,7 @@ public class UserController {
      * 检查用户名是否有效
      * str,type
      * str可以是用户名也可以是email。对应的type是 username 和 email
+     *
      * @param str
      * @param type
      * @return
@@ -145,10 +149,10 @@ public class UserController {
     ///user/get_information.do
     @RequestMapping(value = "get_information.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> getInformation(HttpSession httpSession){
+    public ServerResponse<User> getInformation(HttpSession httpSession) {
         User current_user = (User) httpSession.getAttribute(Const.CURRENT_USER);
         if (current_user == null) {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录，需强制登录");
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "未登录，需强制登录");
         }
 
         return iUserService.getInformation(current_user.getId());

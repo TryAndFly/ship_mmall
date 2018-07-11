@@ -107,8 +107,8 @@ public class ProductManageController {
         Map resMap = Maps.newHashMap();
         ServerResponse serverResponse = isAdmin(httpSession);
         if (!serverResponse.isSuccess()) {
-            resMap.put("success",false);
-            resMap.put("msg","没有权限处理此操作");
+            resMap.put("success", false);
+            resMap.put("msg", "没有权限处理此操作");
             return resMap;
         }
 
@@ -123,19 +123,19 @@ public class ProductManageController {
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.upload(file, path);
 
-        if (StringUtils.isBlank(targetFileName)){
-            resMap.put("success",false);
-            resMap.put("msg","上传失败");
+        if (StringUtils.isBlank(targetFileName)) {
+            resMap.put("success", false);
+            resMap.put("msg", "上传失败");
 
             return resMap;
         }
 
         String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
-        resMap.put("success",true);
-        resMap.put("msg","上传成功");
-        resMap.put("file_path",url);
+        resMap.put("success", true);
+        resMap.put("msg", "上传成功");
+        resMap.put("file_path", url);
         //富文本插件的要求
-        response.addHeader("Access-Control-Allow-Headers","X-File-Name");
+        response.addHeader("Access-Control-Allow-Headers", "X-File-Name");
         return resMap;
     }
 

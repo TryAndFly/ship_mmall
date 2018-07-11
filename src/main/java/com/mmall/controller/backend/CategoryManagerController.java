@@ -25,7 +25,7 @@ public class CategoryManagerController {
     @Autowired
     private ICategoryService iCategoryService;
 
-    @RequestMapping(value = "add_category.do",method = RequestMethod.POST)
+    @RequestMapping(value = "add_category.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse addCategroy(HttpSession httpSession, String categoryName,
                                       @RequestParam(value = "parentId", defaultValue = "0") Integer parentId) {
@@ -44,7 +44,7 @@ public class CategoryManagerController {
 
     }
 
-    @RequestMapping(value = "set_category_name.do",method = RequestMethod.POST)
+    @RequestMapping(value = "set_category_name.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse setCategroyName(HttpSession httpSession, Integer categoryId, String categoryName) {
         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
