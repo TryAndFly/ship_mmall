@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import static com.mmall.util.Util.isAdmin;
@@ -27,10 +28,10 @@ public class OrderManagerController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse<PageInfo> orderList(HttpSession httpSession,
+    public ServerResponse<PageInfo> orderList(HttpServletRequest request,
                                               @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                               @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ServerResponse response = isAdmin(httpSession);
+        ServerResponse response = isAdmin(request);
         if (!response.isSuccess()) {
             return response;
         }
@@ -39,8 +40,8 @@ public class OrderManagerController {
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse<OrderVo> detail(HttpSession httpSession, Long orderNo) {
-        ServerResponse response = isAdmin(httpSession);
+    public ServerResponse<OrderVo> detail(HttpServletRequest request, Long orderNo) {
+        ServerResponse response = isAdmin(request);
         if (!response.isSuccess()) {
             return response;
         }
@@ -49,10 +50,10 @@ public class OrderManagerController {
 
     @RequestMapping("search.do")
     @ResponseBody
-    public ServerResponse<PageInfo> orderSearche(HttpSession httpSession, Long orderNo,
+    public ServerResponse<PageInfo> orderSearche(HttpServletRequest request, Long orderNo,
                                                  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                                  @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ServerResponse response = isAdmin(httpSession);
+        ServerResponse response = isAdmin(request);
         if (!response.isSuccess()) {
             return response;
         }
@@ -62,8 +63,8 @@ public class OrderManagerController {
     //发货接口
     @RequestMapping("send_goods.do")
     @ResponseBody
-    public ServerResponse<String> sendGoods(HttpSession httpSession, Long orderNo) {
-        ServerResponse response = isAdmin(httpSession);
+    public ServerResponse<String> sendGoods(HttpServletRequest request, Long orderNo) {
+        ServerResponse response = isAdmin(request);
         if (!response.isSuccess()) {
             return response;
         }
