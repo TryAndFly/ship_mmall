@@ -5,12 +5,14 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.ICartService;
+import com.mmall.util.Util;
 import com.mmall.vo.CartVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -22,8 +24,8 @@ public class CartController {
 
     @RequestMapping("add.do")
     @ResponseBody
-    public ServerResponse<CartVo> add(HttpSession httpSession, Integer count, Integer productId) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<CartVo> add(HttpServletRequest request, Integer count, Integer productId) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -32,8 +34,8 @@ public class CartController {
 
     @RequestMapping("update.do")
     @ResponseBody
-    public ServerResponse<CartVo> update(HttpSession httpSession, Integer count, Integer productId) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<CartVo> update(HttpServletRequest request, Integer count, Integer productId) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -43,8 +45,8 @@ public class CartController {
 
     @RequestMapping("delete_product.do")
     @ResponseBody
-    public ServerResponse<CartVo> deleteProduct(HttpSession httpSession, String productIds) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<CartVo> deleteProduct(HttpServletRequest request, String productIds) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -53,8 +55,8 @@ public class CartController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse<CartVo> list(HttpSession httpSession) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<CartVo> list(HttpServletRequest request) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -64,8 +66,8 @@ public class CartController {
     //全选
     @RequestMapping("select_all.do")
     @ResponseBody
-    public ServerResponse<CartVo> selectAll(HttpSession httpSession) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<CartVo> selectAll(HttpServletRequest request) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -75,8 +77,8 @@ public class CartController {
     //全反选
     @RequestMapping("un_select_all.do")
     @ResponseBody
-    public ServerResponse<CartVo> unSelectAll(HttpSession httpSession) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<CartVo> unSelectAll(HttpServletRequest request) {
+        User user =Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -86,8 +88,8 @@ public class CartController {
     //单独选
     @RequestMapping("select.do")
     @ResponseBody
-    public ServerResponse<CartVo> select(HttpSession httpSession, Integer productId) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<CartVo> select(HttpServletRequest request, Integer productId) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -97,8 +99,8 @@ public class CartController {
     //单独反选
     @RequestMapping("un_select.do")
     @ResponseBody
-    public ServerResponse<CartVo> unSelect(HttpSession httpSession, Integer productId) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<CartVo> unSelect(HttpServletRequest request, Integer productId) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -108,8 +110,8 @@ public class CartController {
     //查询当前用户的购物车的产品数量,如果产品有十个数量就是10，
     @RequestMapping("get_cart_product_count.do")
     @ResponseBody
-    public ServerResponse<Integer> getCartProductCount(HttpSession httpSession) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<Integer> getCartProductCount(HttpServletRequest request) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createBySuccess(0);
         }
