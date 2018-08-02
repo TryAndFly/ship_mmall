@@ -9,6 +9,7 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
+import com.mmall.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,9 +33,9 @@ public class OrderController {
 
     @RequestMapping("create.do")
     @ResponseBody
-    public ServerResponse create(HttpSession httpSession, Integer shippingId) {
+    public ServerResponse create(HttpServletRequest request, Integer shippingId) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -43,9 +44,9 @@ public class OrderController {
 
     @RequestMapping("cancel.do")
     @ResponseBody
-    public ServerResponse cancel(HttpSession httpSession, Long orderNo) {
+    public ServerResponse cancel(HttpServletRequest request, Long orderNo) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -61,9 +62,9 @@ public class OrderController {
      */
     @RequestMapping("get_order_cart_product.do")
     @ResponseBody
-    public ServerResponse getOrderCartProduct(HttpSession httpSession) {
+    public ServerResponse getOrderCartProduct(HttpServletRequest request) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -73,9 +74,9 @@ public class OrderController {
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse detail(HttpSession httpSession, Long orderNo) {
+    public ServerResponse detail(HttpServletRequest request, Long orderNo) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -85,12 +86,12 @@ public class OrderController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse list(HttpSession httpSession,
+    public ServerResponse list(HttpServletRequest request,
                                @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
     ) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -100,9 +101,9 @@ public class OrderController {
 
     @RequestMapping("pay.do")
     @ResponseBody
-    public ServerResponse pay(HttpSession httpSession, Long orderNo, HttpServletRequest request) {
+    public ServerResponse pay( Long orderNo, HttpServletRequest request) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -158,9 +159,9 @@ public class OrderController {
 
     @RequestMapping("query_order_pay_status.do")
     @ResponseBody
-    public ServerResponse<Boolean> queryOrderPayStatus(HttpSession httpSession, Long orderNo) {
+    public ServerResponse<Boolean> queryOrderPayStatus(HttpServletRequest request, Long orderNo) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
