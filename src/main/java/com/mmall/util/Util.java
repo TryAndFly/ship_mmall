@@ -41,6 +41,16 @@ public class Util {
         return ServerResponse.createByErrorMessage("权限不足");
     }
 
+
+    public static User getUser(HttpServletRequest request){
+        //V2.0引入redis重写
+        String loginToken = CookieUtil.readLoginToken(request);
+        //从redis中获取用户序列化字符串
+        String userStr = RedisPoolUtil.get(loginToken);
+        //字符串转换成对象
+        User user = JsonUtil.string2Obj(userStr,User.class);
+        return user;
+    }
     //joda-time
     //str -->date
 

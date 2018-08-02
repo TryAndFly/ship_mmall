@@ -1,11 +1,11 @@
 package com.mmall.controller.backend;
 
-import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.ICategoryService;
 import com.mmall.service.IUserService;
+import com.mmall.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/manage/category/")
@@ -27,9 +27,9 @@ public class CategoryManagerController {
 
     @RequestMapping(value = "add_category.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse addCategroy(HttpSession httpSession, String categoryName,
+    public ServerResponse addCategroy(HttpServletRequest request, String categoryName,
                                       @RequestParam(value = "parentId", defaultValue = "0") Integer parentId) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -46,8 +46,8 @@ public class CategoryManagerController {
 
     @RequestMapping(value = "set_category_name.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse setCategroyName(HttpSession httpSession, Integer categoryId, String categoryName) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse setCategroyName(HttpServletRequest request, Integer categoryId, String categoryName) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -63,10 +63,10 @@ public class CategoryManagerController {
     //    /manage/category/get_category.do
     @RequestMapping(value = "get_category.do")
     @ResponseBody
-    public ServerResponse getCategory(HttpSession httpSession,
+    public ServerResponse getCategory(HttpServletRequest request,
                                       @RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -83,9 +83,9 @@ public class CategoryManagerController {
     //    /manage/category/get_deep_category.do
     @RequestMapping(value = "get_deep_category.do")
     @ResponseBody
-    public ServerResponse getDeepCategory(HttpSession httpSession,
+    public ServerResponse getDeepCategory(HttpServletRequest request,
                                           @RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
