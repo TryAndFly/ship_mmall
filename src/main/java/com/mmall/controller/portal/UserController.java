@@ -7,7 +7,7 @@ import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,7 +48,7 @@ public class UserController {
 //            JSESSIONID=C61220CC73DD5D33B5D15BE8EB43C2D5
 //            V2.0版本引入redis,解决单点登录问题
             CookieUtil.writeLoginToken(httpServletResponse, httpSession.getId());
-            RedisPoolUtil.setEx(httpSession.getId(), JsonUtil.objToString(response.getData()), Const.RedisCacheExtim.REDIS_SESSION_EXTIME);
+            RedisShardedPoolUtil.setEx(httpSession.getId(), JsonUtil.objToString(response.getData()), Const.RedisCacheExtim.REDIS_SESSION_EXTIME);
 
         }
         return response;
@@ -66,7 +66,7 @@ public class UserController {
 //        httpSession.removeAttribute(Const.CURRENT_USER);
         String loginToken = CookieUtil.readLoginToken(request);
         CookieUtil.delLoginToken(request, response);
-        RedisPoolUtil.del(loginToken);
+        RedisShardedPoolUtil.del(loginToken);
         return ServerResponse.createBySuccessMessage("退出登录成功");
     }
 
@@ -113,7 +113,7 @@ public class UserController {
             return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
         }
         //从redis中获取用户序列化字符串
-        String userStr = RedisPoolUtil.get(loginToken);
+        String userStr = RedisShardedPoolUtil.get(loginToken);
         //字符串转换成对象
         User user = JsonUtil.string2Obj(userStr, User.class);
 
@@ -156,7 +156,7 @@ public class UserController {
             return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
         }
         //从redis中获取用户序列化字符串
-        String userStr = RedisPoolUtil.get(loginToken);
+        String userStr = RedisShardedPoolUtil.get(loginToken);
         //字符串转换成对象
         User user = JsonUtil.string2Obj(userStr, User.class);
         if (user == null) {
@@ -175,7 +175,7 @@ public class UserController {
             return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
         }
         //从redis中获取用户序列化字符串
-        String userStr = RedisPoolUtil.get(loginToken);
+        String userStr = RedisShardedPoolUtil.get(loginToken);
         //字符串转换成对象
         User current_user = JsonUtil.string2Obj(userStr, User.class);
 
@@ -188,7 +188,7 @@ public class UserController {
         if (response.isSuccess()) {
 //            httpSession.setAttribute(Const.CURRENT_USER, response.getData());
             response.getData().setUsername(current_user.getUsername());
-            RedisPoolUtil.setEx(loginToken, JsonUtil.objToString(response.getData()), Const.RedisCacheExtim.REDIS_SESSION_EXTIME);
+            RedisShardedPoolUtil.setEx(loginToken, JsonUtil.objToString(response.getData()), Const.RedisCacheExtim.REDIS_SESSION_EXTIME);
         }
 
         return response;
@@ -204,7 +204,7 @@ public class UserController {
             return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
         }
         //从redis中获取用户序列化字符串
-        String userStr = RedisPoolUtil.get(loginToken);
+        String userStr = RedisShardedPoolUtil.get(loginToken);
         //字符串转换成对象
         User current_user = JsonUtil.string2Obj(userStr, User.class);
         if (current_user == null) {

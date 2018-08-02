@@ -10,7 +10,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 
 public class Util {
@@ -28,7 +27,7 @@ public class Util {
             return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
         }
         //从redis中获取用户序列化字符串
-        String userStr = RedisPoolUtil.get(loginToken);
+        String userStr = RedisShardedPoolUtil.get(loginToken);
         //字符串转换成对象
         User user = JsonUtil.string2Obj(userStr,User.class);
 
@@ -46,7 +45,7 @@ public class Util {
         //V2.0引入redis重写
         String loginToken = CookieUtil.readLoginToken(request);
         //从redis中获取用户序列化字符串
-        String userStr = RedisPoolUtil.get(loginToken);
+        String userStr = RedisShardedPoolUtil.get(loginToken);
         //字符串转换成对象
         User user = JsonUtil.string2Obj(userStr,User.class);
         return user;

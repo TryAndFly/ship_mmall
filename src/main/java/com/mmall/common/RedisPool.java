@@ -15,8 +15,8 @@ public class RedisPool {
     private static boolean testOnBorrow= Boolean.parseBoolean(PropertiesUtil.getProperty("redis.test.borrow", "true"));//在borrow一个Jedis实例时，是否需要进行验证操作，如果为true则每次都是可用实例
     private static boolean testOnReturn= Boolean.parseBoolean(PropertiesUtil.getProperty("redis.test.return", "true"));//在return一个Jedis实例时，是否需要进行验证操作，如果为true则每次都是可用实例
 
-    private static String redisIp = PropertiesUtil.getProperty("redis.ip","127.0.0.1");
-    private static Integer redisPort = Integer.parseInt(PropertiesUtil.getProperty("redis.port", "6739"));
+    private static String redisIp = PropertiesUtil.getProperty("redis1.ip","127.0.0.1");
+    private static Integer redisPort = Integer.parseInt(PropertiesUtil.getProperty("redis1.port", "6739"));
 
 
     private static void initPool(){

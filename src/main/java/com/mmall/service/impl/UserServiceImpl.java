@@ -6,7 +6,7 @@ import com.mmall.dao.UserMapper;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
 import com.mmall.util.MD5Util;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -108,7 +108,7 @@ public class UserServiceImpl implements IUserService {
             //本地缓存存放token
 //            TokenCache.setKey(TokenCache.TOKEN_PREFIX + username, forgetToken);
             //由于引入集群，需要将token从guava cache 中迁移到redis中
-            RedisPoolUtil.setEx(Const.TOKEN_PREFIX + username, forgetToken, 60 * 60 * 12);
+            RedisShardedPoolUtil.setEx(Const.TOKEN_PREFIX + username, forgetToken, 60 * 60 * 12);
             return ServerResponse.createBySuccess(forgetToken);
 
         }
@@ -127,7 +127,7 @@ public class UserServiceImpl implements IUserService {
         //由于引入集群，需要将token从guava cache 中迁移到redis中
         //String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX + username);
 
-        String token = RedisPoolUtil.get(Const.TOKEN_PREFIX + username);
+        String token = RedisShardedPoolUtil.get(Const.TOKEN_PREFIX + username);
         if (StringUtils.isBlank(token)) {
             return ServerResponse.createByErrorMessage("token无效或者过期");
         }
