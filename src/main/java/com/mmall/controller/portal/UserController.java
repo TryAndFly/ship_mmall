@@ -38,7 +38,6 @@ public class UserController {
     @ResponseBody//自动解析成json
     public ServerResponse<User> login(String username, String password,
                                       HttpSession httpSession, HttpServletResponse httpServletResponse) {
-
         //service--mybatis--dao
         ServerResponse<User> response = iUserService.login(username, password);
         if (response.isSuccess()) {
