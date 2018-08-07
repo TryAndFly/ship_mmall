@@ -45,6 +45,7 @@
         <!--定义在此处的都会拦截-->
         <mvc:interceptor>
             <mvc:mapping path="/manage/**"/>
+            <!--<mvc:exclude-mapping path="/manage/user/login.do"></mvc:exclude-mapping>-->
             <bean class="com.mmall.controller.common.interceptor.AuthorityInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>

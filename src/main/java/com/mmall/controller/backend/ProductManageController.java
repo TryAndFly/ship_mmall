@@ -37,63 +37,35 @@ public class ProductManageController {
 
     @RequestMapping("save.do")
     @ResponseBody
-    public ServerResponse productSave(HttpServletRequest request, Product product) {
-        ServerResponse response = isAdmin(request);
-        if (!response.isSuccess()) {
-            return response;
-        }
+    public ServerResponse productSave(Product product) {
         return iProductService.saveOrUpdateProduct(product);
-
     }
 
     @RequestMapping("set_sale_status.do")
     @ResponseBody
-    public ServerResponse setSaleStatus(HttpServletRequest request, Integer productId, Integer status) {
-        ServerResponse response = isAdmin(request);
-        if (!response.isSuccess()) {
-            return response;
-        }
+    public ServerResponse setSaleStatus(Integer productId, Integer status) {
         return iProductService.setSaleStatus(productId, status);
     }
 
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse getDetail(HttpServletRequest request, Integer productId) {
-        ServerResponse response = isAdmin(request);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
-        //todo
+    public ServerResponse getDetail(Integer productId) {
         return iProductService.manageProductDetail(productId);
     }
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse getList(HttpServletRequest request,
-                                  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+    public ServerResponse getList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                   @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ServerResponse response = isAdmin(request);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
-        //todo
         return iProductService.getProductList(pageNum, pageSize);
     }
 
     @RequestMapping("search.do")
     @ResponseBody
-    public ServerResponse productSearch(HttpServletRequest request, String productName, Integer productId,
+    public ServerResponse productSearch(String productName, Integer productId,
                                         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ServerResponse response = isAdmin(request);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
-        //todo
         return iProductService.searchProduct(productName, productId, pageNum, pageSize);
     }
 
@@ -103,12 +75,6 @@ public class ProductManageController {
                                  HttpServletRequest request,
                                  HttpServletResponse response) {
         Map resMap = Maps.newHashMap();
-        ServerResponse serverResponse = isAdmin(request);
-        if (!serverResponse.isSuccess()) {
-            resMap.put("success", false);
-            resMap.put("msg", "没有权限处理此操作");
-            return resMap;
-        }
 
         //富文本对返回值有自己的要求，我们使用的是simditor的要求，需要按照 simditor 的要求返回
         //http://simditor.tower.im/docs/doc-config.html
@@ -141,11 +107,6 @@ public class ProductManageController {
     @ResponseBody
     public ServerResponse upload(@RequestParam(value = "upload_file", required = false) MultipartFile file,
                                  HttpServletRequest request) {
-        ServerResponse response = isAdmin(request);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
         // webapp/upload
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.upload(file, path);

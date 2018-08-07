@@ -15,7 +15,7 @@ public class CookieUtil {
 
     public static void writeLoginToken(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie(COOKIE_NAME, token);
-        cookie.setDomain(COOKIE_DOMAIN);
+//        cookie.setDomain(COOKIE_DOMAIN);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         //-1是代表永久，如果不设置的话不会存入硬盘，只有当前页面有效

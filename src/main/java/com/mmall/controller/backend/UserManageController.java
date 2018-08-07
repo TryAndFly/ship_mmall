@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping(value = "/manage/user/")
-public class UserManagerController {
+public class UserManageController {
 
     @Autowired
     IUserService iUserService;
@@ -34,7 +34,6 @@ public class UserManagerController {
             if (user.getRole() == Const.Role.ROLE_ADMIN) {
                 CookieUtil.writeLoginToken(servletResponse, httpSession.getId());
                 RedisShardedPoolUtil.setEx(httpSession.getId(), JsonUtil.objToString(response.getData()), Const.RedisCacheExtim.REDIS_SESSION_EXTIME);
-
                 return response;
             }
             return ServerResponse.createByErrorMessage("不是管理员，无法登录");
