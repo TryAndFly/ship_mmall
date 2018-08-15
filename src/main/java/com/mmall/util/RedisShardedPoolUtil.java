@@ -69,6 +69,23 @@ public class RedisShardedPoolUtil {
         return result;
     }
 
+    public static String getSet(String key, String vaule) {
+        ShardedJedis jedis = null;
+        String result = null;
+
+        try {
+            jedis = RedisSharderPool.getJedis();
+            result = jedis.getSet(key, vaule);
+        } catch (Exception e) {
+//            e.printStackTrace();
+            log.error("set key:{} ,value:{} error", key, vaule, e);
+            RedisSharderPool.returnBrokenResouce(jedis);
+            return result;
+        }
+        RedisSharderPool.returnResource(jedis);
+        return result;
+    }
+
     public static Long setnx(String key, String vaule) {
         ShardedJedis jedis = null;
         Long result = null;
