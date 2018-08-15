@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 public class Util {
@@ -17,12 +17,20 @@ public class Util {
     public static final String STANDARD_FORMAT="yyyy-MM-dd HH:mm:ss";
     /**
      * 判断是否具有管理员权限
-     * @param httpSession
-     * @param errorStr
+     * @param request
      * @return
      */
-    public static ServerResponse isAdmin(HttpSession httpSession){
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public static ServerResponse isAdmin(HttpServletRequest request){
+        //V2.0引入redis重写
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isEmpty(loginToken)){
+            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
+        }
+        //从redis中获取用户序列化字符串
+        String userStr = RedisShardedPoolUtil.get(loginToken);
+        //字符串转换成对象
+        User user = JsonUtil.string2Obj(userStr,User.class);
+
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录，请登录管理员帐号");
         }
@@ -32,6 +40,16 @@ public class Util {
         return ServerResponse.createByErrorMessage("权限不足");
     }
 
+
+    public static User getUser(HttpServletRequest request){
+        //V2.0引入redis重写
+        String loginToken = CookieUtil.readLoginToken(request);
+        //从redis中获取用户序列化字符串
+        String userStr = RedisShardedPoolUtil.get(loginToken);
+        //字符串转换成对象
+        User user = JsonUtil.string2Obj(userStr,User.class);
+        return user;
+    }
     //joda-time
     //str -->date
 

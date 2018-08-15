@@ -9,8 +9,8 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.mmall.util.Util;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,52 +20,51 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/order/")
 public class OrderController {
-
-    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @Autowired
     private IOrderService orderService;
 
     @RequestMapping("create.do")
     @ResponseBody
-    public ServerResponse create(HttpSession httpSession, Integer shippingId){
+    public ServerResponse create(HttpServletRequest request, Integer shippingId) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        return orderService.createOrder(user.getId(),shippingId);
+        return orderService.createOrder(user.getId(), shippingId);
     }
 
     @RequestMapping("cancel.do")
     @ResponseBody
-    public ServerResponse cancel(HttpSession httpSession, Long orderNo){
+    public ServerResponse cancel(HttpServletRequest request, Long orderNo) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
 
-        return orderService.cancelOrder(user.getId(),orderNo);
+        return orderService.cancelOrder(user.getId(), orderNo);
     }
 
     /**
      * 获取购物车中已经选择的商品详情
+     *
      * @param httpSession
      * @return
      */
     @RequestMapping("get_order_cart_product.do")
     @ResponseBody
-    public ServerResponse getOrderCartProduct(HttpSession httpSession){
+    public ServerResponse getOrderCartProduct(HttpServletRequest request) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -75,75 +74,75 @@ public class OrderController {
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse detail(HttpSession httpSession, Long orderNo){
+    public ServerResponse detail(HttpServletRequest request, Long orderNo) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
 
-        return orderService.getOrderDetial(user.getId(),orderNo);
+        return orderService.getOrderDetial(user.getId(), orderNo);
     }
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse list(HttpSession httpSession,
-                               @RequestParam(value = "pageNum",defaultValue = "1")int pageNum,
-                               @RequestParam(value = "pageSize",defaultValue = "10")int pageSize
-                               ){
+    public ServerResponse list(HttpServletRequest request,
+                               @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                               @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+    ) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
 
-        return orderService.getOrderList(pageNum,pageSize,user.getId());
+        return orderService.getOrderList(pageNum, pageSize, user.getId());
     }
 
     @RequestMapping("pay.do")
     @ResponseBody
-    public ServerResponse pay(HttpSession httpSession, Long orderNo, HttpServletRequest request){
+    public ServerResponse pay( Long orderNo, HttpServletRequest request) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
         String path = request.getSession().getServletContext().getRealPath("upload");
 
-        return orderService.pay(orderNo,user.getId(),path);
+        return orderService.pay(orderNo, user.getId(), path);
     }
 
-    @RequestMapping(value = "alipay_callback.do",method = RequestMethod.POST)
+    @RequestMapping(value = "alipay_callback.do", method = RequestMethod.POST)
     @ResponseBody
-    public Object alipayCallback(HttpServletRequest request){
-        Map<String,String> params = Maps.newHashMap();
+    public Object alipayCallback(HttpServletRequest request) {
+        Map<String, String> params = Maps.newHashMap();
         Map requestParams = request.getParameterMap();
-        for (Iterator iterator =requestParams.keySet().iterator();iterator.hasNext();){
+        for (Iterator iterator = requestParams.keySet().iterator(); iterator.hasNext(); ) {
             String name = (String) iterator.next();
-            String [] values = (String[]) requestParams.get(name);
+            String[] values = (String[]) requestParams.get(name);
             String valueStr = "";
-            for (int i=0;i<values.length;i++){
+            for (int i = 0; i < values.length; i++) {
                 //如果不是最后一个元素则使用逗号进行拼接 eg:1,e,3,4
-                valueStr = (i == values.length - 17)?valueStr+values[i]:valueStr+values[i]+",";
+                valueStr = (i == values.length - 17) ? valueStr + values[i] : valueStr + values[i] + ",";
 
             }
-            params.put(name,valueStr);
+            params.put(name, valueStr);
         }
 
-        logger.info("支付宝回调，sign:{},trade_status{},参数{}",
-                params.get("sign"),params.get("trade_status"),params.toString());
+        log.info("支付宝回调，sign:{},trade_status{},参数{}",
+                params.get("sign"), params.get("trade_status"), params.toString());
         //rsaCheckV2验证回调的正确性，且需要避免重复通知
         params.remove("sign_type");
-        boolean alipayRSACheckV2 =false;
+        boolean alipayRSACheckV2 = false;
         try {
             alipayRSACheckV2 = AlipaySignature.rsaCheckV2(params, Configs.getAlipayPublicKey(),
-                    "utf-8",Configs.getSignType());
+                    "utf-8", Configs.getSignType());
 
         } catch (AlipayApiException e) {
-            logger.info("支付宝回调验证出现问题",e);
+            log.info("支付宝回调验证出现问题", e);
             e.printStackTrace();
         }
-        if (!alipayRSACheckV2){
+        if (!alipayRSACheckV2) {
             return ServerResponse.createByErrorMessage("非法请求，验证不通过");
         }
         //todo 验证各种数据
@@ -151,7 +150,7 @@ public class OrderController {
         //
         ServerResponse serverResponse = orderService.aliCallback(params);
 
-        if (serverResponse.isSuccess()){
+        if (serverResponse.isSuccess()) {
             return Const.AlipayCallBack.RESPONSE_SUCCESS;
         }
 
@@ -160,21 +159,19 @@ public class OrderController {
 
     @RequestMapping("query_order_pay_status.do")
     @ResponseBody
-    public ServerResponse<Boolean> queryOrderPayStatus(HttpSession httpSession, Long orderNo){
+    public ServerResponse<Boolean> queryOrderPayStatus(HttpServletRequest request, Long orderNo) {
 
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
 
-        ServerResponse response=orderService.queryOrderPayStatus(user.getId(),orderNo);
-        if (response.isSuccess()){
+        ServerResponse response = orderService.queryOrderPayStatus(user.getId(), orderNo);
+        if (response.isSuccess()) {
             return ServerResponse.createBySuccess(true);
         }
         return ServerResponse.createBySuccess(false);
     }
-
-
 
 
 }

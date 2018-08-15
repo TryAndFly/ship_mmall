@@ -25,6 +25,19 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!--V2.0版本新增的重置session时间的filter-->
+    <filter>
+        <filter-name>sessionExpireFilter</filter-name>
+        <filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessionExpireFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+
+
+
+
     <!--监听器配置-->
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
@@ -48,10 +61,16 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>dispatcher</servlet-name>-->
+        <!--<url-pattern>*.do</url-pattern>-->
+    <!--</servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <url-pattern>*.do</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>

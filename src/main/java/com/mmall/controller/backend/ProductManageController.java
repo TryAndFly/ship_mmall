@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 import static com.mmall.util.Util.isAdmin;
@@ -38,79 +37,44 @@ public class ProductManageController {
 
     @RequestMapping("save.do")
     @ResponseBody
-    public ServerResponse productSave(HttpSession httpSession, Product product) {
-        ServerResponse response = isAdmin(httpSession);
-        if (!response.isSuccess()) {
-            return response;
-        }
+    public ServerResponse productSave(Product product) {
         return iProductService.saveOrUpdateProduct(product);
-
     }
 
     @RequestMapping("set_sale_status.do")
     @ResponseBody
-    public ServerResponse setSaleStatus(HttpSession httpSession, Integer productId, Integer status) {
-        ServerResponse response = isAdmin(httpSession);
-        if (!response.isSuccess()) {
-            return response;
-        }
+    public ServerResponse setSaleStatus(Integer productId, Integer status) {
         return iProductService.setSaleStatus(productId, status);
     }
 
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse getDetail(HttpSession httpSession, Integer productId) {
-        ServerResponse response = isAdmin(httpSession);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
-        //todo
+    public ServerResponse getDetail(Integer productId) {
         return iProductService.manageProductDetail(productId);
     }
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse getList(HttpSession httpSession,
-                                  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+    public ServerResponse getList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                   @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ServerResponse response = isAdmin(httpSession);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
-        //todo
         return iProductService.getProductList(pageNum, pageSize);
     }
 
     @RequestMapping("search.do")
     @ResponseBody
-    public ServerResponse productSearch(HttpSession httpSession, String productName, Integer productId,
+    public ServerResponse productSearch(String productName, Integer productId,
                                         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ServerResponse response = isAdmin(httpSession);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
-        //todo
         return iProductService.searchProduct(productName, productId, pageNum, pageSize);
     }
 
     @RequestMapping("richtext_img_upload.do")
     @ResponseBody
-    public Map richtextImgUpload(HttpSession httpSession,
-                                 @RequestParam(value = "upload_file", required = false) MultipartFile file,
+    public Map richtextImgUpload(@RequestParam(value = "upload_file", required = false) MultipartFile file,
                                  HttpServletRequest request,
                                  HttpServletResponse response) {
         Map resMap = Maps.newHashMap();
-        ServerResponse serverResponse = isAdmin(httpSession);
-        if (!serverResponse.isSuccess()) {
-            resMap.put("success",false);
-            resMap.put("msg","没有权限处理此操作");
-            return resMap;
-        }
 
         //富文本对返回值有自己的要求，我们使用的是simditor的要求，需要按照 simditor 的要求返回
         //http://simditor.tower.im/docs/doc-config.html
@@ -123,31 +87,26 @@ public class ProductManageController {
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.upload(file, path);
 
-        if (StringUtils.isBlank(targetFileName)){
-            resMap.put("success",false);
-            resMap.put("msg","上传失败");
+        if (StringUtils.isBlank(targetFileName)) {
+            resMap.put("success", false);
+            resMap.put("msg", "上传失败");
 
             return resMap;
         }
 
         String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
-        resMap.put("success",true);
-        resMap.put("msg","上传成功");
-        resMap.put("file_path",url);
+        resMap.put("success", true);
+        resMap.put("msg", "上传成功");
+        resMap.put("file_path", url);
         //富文本插件的要求
-        response.addHeader("Access-Control-Allow-Headers","X-File-Name");
+        response.addHeader("Access-Control-Allow-Headers", "X-File-Name");
         return resMap;
     }
 
     @RequestMapping("upload.do")
     @ResponseBody
-    public ServerResponse upload(HttpSession httpSession, @RequestParam(value = "upload_file", required = false) MultipartFile file,
+    public ServerResponse upload(@RequestParam(value = "upload_file", required = false) MultipartFile file,
                                  HttpServletRequest request) {
-        ServerResponse response = isAdmin(httpSession);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
         // webapp/upload
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.upload(file, path);

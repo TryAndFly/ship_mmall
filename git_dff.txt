@@ -1,0 +1,1971 @@
+diff --git a/pom.xml b/pom.xml
+index ea32db5..5e6cd51 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -27,7 +27,7 @@
+     <name>mmall Maven Webapp</name>
+     <groupId>com</groupId>
+     <artifactId>mmall</artifactId>
+-    <version>1.0-SNAPSHOT</version>
++    <version>2.0-SNAPSHOT</version>
+ 
+     <properties>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+@@ -263,11 +263,16 @@
+             <artifactId>jedis</artifactId>
+             <version>2.9.0</version>
+         </dependency>
++
++        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+         <dependency>
+-            <groupId>com</groupId>
+-            <artifactId>mmall</artifactId>
+-            <version>1.0-SNAPSHOT</version>
++            <groupId>org.projectlombok</groupId>
++            <artifactId>lombok</artifactId>
++            <version>1.16.18</version>
+         </dependency>
++
++
++
+     </dependencies>
+ 
+     <build>
+diff --git a/src/main/java/com/mmall/common/TokenCache.java b/src/main/java/com/mmall/common/TokenCache.java
+index 6a1e2b5..18877cc 100644
+--- a/src/main/java/com/mmall/common/TokenCache.java
++++ b/src/main/java/com/mmall/common/TokenCache.java
+@@ -3,14 +3,13 @@ package com.mmall.common;
+ import com.google.common.cache.CacheBuilder;
+ import com.google.common.cache.CacheLoader;
+ import com.google.common.cache.LoadingCache;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
++import lombok.extern.slf4j.Slf4j;
+ 
+ import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.TimeUnit;
+ 
++@Slf4j
+ public class TokenCache {
+-    private static Logger logger = LoggerFactory.getLogger(TokenCache.class);
+ 
+     public static final String TOKEN_PREFIX = "token_";
+ 
+@@ -42,7 +41,7 @@ public class TokenCache {
+             }
+             return value;
+         } catch (ExecutionException e) {
+-            logger.error("localCache get error:", e);
++            log.error("localCache get error:", e);
+         }
+         return null;
+     }
+diff --git a/src/main/java/com/mmall/controller/backend/CategoryManagerController.java b/src/main/java/com/mmall/controller/backend/CategoryManagerController.java
+index 680d462..74a23d6 100644
+--- a/src/main/java/com/mmall/controller/backend/CategoryManagerController.java
++++ b/src/main/java/com/mmall/controller/backend/CategoryManagerController.java
+@@ -25,7 +25,7 @@ public class CategoryManagerController {
+     @Autowired
+     private ICategoryService iCategoryService;
+ 
+-    @RequestMapping(value = "add_category.do",method = RequestMethod.POST)
++    @RequestMapping(value = "add_category.do", method = RequestMethod.POST)
+     @ResponseBody
+     public ServerResponse addCategroy(HttpSession httpSession, String categoryName,
+                                       @RequestParam(value = "parentId", defaultValue = "0") Integer parentId) {
+@@ -44,7 +44,7 @@ public class CategoryManagerController {
+ 
+     }
+ 
+-    @RequestMapping(value = "set_category_name.do",method = RequestMethod.POST)
++    @RequestMapping(value = "set_category_name.do", method = RequestMethod.POST)
+     @ResponseBody
+     public ServerResponse setCategroyName(HttpSession httpSession, Integer categoryId, String categoryName) {
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+diff --git a/src/main/java/com/mmall/controller/backend/ProductManageController.java b/src/main/java/com/mmall/controller/backend/ProductManageController.java
+index 327185c..646b881 100644
+--- a/src/main/java/com/mmall/controller/backend/ProductManageController.java
++++ b/src/main/java/com/mmall/controller/backend/ProductManageController.java
+@@ -107,8 +107,8 @@ public class ProductManageController {
+         Map resMap = Maps.newHashMap();
+         ServerResponse serverResponse = isAdmin(httpSession);
+         if (!serverResponse.isSuccess()) {
+-            resMap.put("success",false);
+-            resMap.put("msg","没有权限处理此操作");
++            resMap.put("success", false);
++            resMap.put("msg", "没有权限处理此操作");
+             return resMap;
+         }
+ 
+@@ -123,19 +123,19 @@ public class ProductManageController {
+         String path = request.getSession().getServletContext().getRealPath("upload");
+         String targetFileName = iFileService.upload(file, path);
+ 
+-        if (StringUtils.isBlank(targetFileName)){
+-            resMap.put("success",false);
+-            resMap.put("msg","上传失败");
++        if (StringUtils.isBlank(targetFileName)) {
++            resMap.put("success", false);
++            resMap.put("msg", "上传失败");
+ 
+             return resMap;
+         }
+ 
+         String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
+-        resMap.put("success",true);
+-        resMap.put("msg","上传成功");
+-        resMap.put("file_path",url);
++        resMap.put("success", true);
++        resMap.put("msg", "上传成功");
++        resMap.put("file_path", url);
+         //富文本插件的要求
+-        response.addHeader("Access-Control-Allow-Headers","X-File-Name");
++        response.addHeader("Access-Control-Allow-Headers", "X-File-Name");
+         return resMap;
+     }
+ 
+diff --git a/src/main/java/com/mmall/controller/portal/CartController.java b/src/main/java/com/mmall/controller/portal/CartController.java
+index 0399edc..e56ef3f 100644
+--- a/src/main/java/com/mmall/controller/portal/CartController.java
++++ b/src/main/java/com/mmall/controller/portal/CartController.java
+@@ -69,8 +69,9 @@ public class CartController {
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+-        return iCartService.selectOrUnSelect(user.getId(), null,Const.Cart.CHECKED);
++        return iCartService.selectOrUnSelect(user.getId(), null, Const.Cart.CHECKED);
+     }
++
+     //全反选
+     @RequestMapping("un_select_all.do")
+     @ResponseBody
+@@ -79,29 +80,31 @@ public class CartController {
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+-        return iCartService.selectOrUnSelect(user.getId(),null, Const.Cart.UNCHECKED);
++        return iCartService.selectOrUnSelect(user.getId(), null, Const.Cart.UNCHECKED);
+     }
+ 
+     //单独选
+     @RequestMapping("select.do")
+     @ResponseBody
+-    public ServerResponse<CartVo> select(HttpSession httpSession,Integer productId) {
++    public ServerResponse<CartVo> select(HttpSession httpSession, Integer productId) {
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+-        return iCartService.selectOrUnSelect(user.getId(),productId, Const.Cart.CHECKED);
++        return iCartService.selectOrUnSelect(user.getId(), productId, Const.Cart.CHECKED);
+     }
++
+     //单独反选
+     @RequestMapping("un_select.do")
+     @ResponseBody
+-    public ServerResponse<CartVo> unSelect(HttpSession httpSession,Integer productId) {
++    public ServerResponse<CartVo> unSelect(HttpSession httpSession, Integer productId) {
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+-        return iCartService.selectOrUnSelect(user.getId(),productId, Const.Cart.UNCHECKED);
++        return iCartService.selectOrUnSelect(user.getId(), productId, Const.Cart.UNCHECKED);
+     }
++
+     //查询当前用户的购物车的产品数量,如果产品有十个数量就是10，
+     @RequestMapping("get_cart_product_count.do")
+     @ResponseBody
+diff --git a/src/main/java/com/mmall/controller/portal/OrderController.java b/src/main/java/com/mmall/controller/portal/OrderController.java
+index 4cffddf..f27439b 100644
+--- a/src/main/java/com/mmall/controller/portal/OrderController.java
++++ b/src/main/java/com/mmall/controller/portal/OrderController.java
+@@ -9,8 +9,7 @@ import com.mmall.common.ResponseCode;
+ import com.mmall.common.ServerResponse;
+ import com.mmall.pojo.User;
+ import com.mmall.service.IOrderService;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
++import lombok.extern.slf4j.Slf4j;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Controller;
+ import org.springframework.web.bind.annotation.RequestMapping;
+@@ -20,50 +19,49 @@ import org.springframework.web.bind.annotation.ResponseBody;
+ 
+ import javax.servlet.http.HttpServletRequest;
+ import javax.servlet.http.HttpSession;
+-import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.Map;
+ 
++@Slf4j
+ @Controller
+ @RequestMapping("/order/")
+ public class OrderController {
+ 
+-    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+-
+     @Autowired
+     private IOrderService orderService;
+ 
+     @RequestMapping("create.do")
+     @ResponseBody
+-    public ServerResponse create(HttpSession httpSession, Integer shippingId){
++    public ServerResponse create(HttpSession httpSession, Integer shippingId) {
+ 
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+-        return orderService.createOrder(user.getId(),shippingId);
++        return orderService.createOrder(user.getId(), shippingId);
+     }
+ 
+     @RequestMapping("cancel.do")
+     @ResponseBody
+-    public ServerResponse cancel(HttpSession httpSession, Long orderNo){
++    public ServerResponse cancel(HttpSession httpSession, Long orderNo) {
+ 
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+ 
+-        return orderService.cancelOrder(user.getId(),orderNo);
++        return orderService.cancelOrder(user.getId(), orderNo);
+     }
+ 
+     /**
+      * 获取购物车中已经选择的商品详情
++     *
+      * @param httpSession
+      * @return
+      */
+     @RequestMapping("get_order_cart_product.do")
+     @ResponseBody
+-    public ServerResponse getOrderCartProduct(HttpSession httpSession){
++    public ServerResponse getOrderCartProduct(HttpSession httpSession) {
+ 
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+@@ -75,34 +73,34 @@ public class OrderController {
+ 
+     @RequestMapping("detail.do")
+     @ResponseBody
+-    public ServerResponse detail(HttpSession httpSession, Long orderNo){
++    public ServerResponse detail(HttpSession httpSession, Long orderNo) {
+ 
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+ 
+-        return orderService.getOrderDetial(user.getId(),orderNo);
++        return orderService.getOrderDetial(user.getId(), orderNo);
+     }
+ 
+     @RequestMapping("list.do")
+     @ResponseBody
+     public ServerResponse list(HttpSession httpSession,
+-                               @RequestParam(value = "pageNum",defaultValue = "1")int pageNum,
+-                               @RequestParam(value = "pageSize",defaultValue = "10")int pageSize
+-                               ){
++                               @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
++                               @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
++    ) {
+ 
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+ 
+-        return orderService.getOrderList(pageNum,pageSize,user.getId());
++        return orderService.getOrderList(pageNum, pageSize, user.getId());
+     }
+ 
+     @RequestMapping("pay.do")
+     @ResponseBody
+-    public ServerResponse pay(HttpSession httpSession, Long orderNo, HttpServletRequest request){
++    public ServerResponse pay(HttpSession httpSession, Long orderNo, HttpServletRequest request) {
+ 
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+@@ -110,40 +108,40 @@ public class OrderController {
+         }
+         String path = request.getSession().getServletContext().getRealPath("upload");
+ 
+-        return orderService.pay(orderNo,user.getId(),path);
++        return orderService.pay(orderNo, user.getId(), path);
+     }
+ 
+-    @RequestMapping(value = "alipay_callback.do",method = RequestMethod.POST)
++    @RequestMapping(value = "alipay_callback.do", method = RequestMethod.POST)
+     @ResponseBody
+-    public Object alipayCallback(HttpServletRequest request){
+-        Map<String,String> params = Maps.newHashMap();
++    public Object alipayCallback(HttpServletRequest request) {
++        Map<String, String> params = Maps.newHashMap();
+         Map requestParams = request.getParameterMap();
+-        for (Iterator iterator =requestParams.keySet().iterator();iterator.hasNext();){
++        for (Iterator iterator = requestParams.keySet().iterator(); iterator.hasNext(); ) {
+             String name = (String) iterator.next();
+-            String [] values = (String[]) requestParams.get(name);
++            String[] values = (String[]) requestParams.get(name);
+             String valueStr = "";
+-            for (int i=0;i<values.length;i++){
++            for (int i = 0; i < values.length; i++) {
+                 //如果不是最后一个元素则使用逗号进行拼接 eg:1,e,3,4
+-                valueStr = (i == values.length - 17)?valueStr+values[i]:valueStr+values[i]+",";
++                valueStr = (i == values.length - 17) ? valueStr + values[i] : valueStr + values[i] + ",";
+ 
+             }
+-            params.put(name,valueStr);
++            params.put(name, valueStr);
+         }
+ 
+-        logger.info("支付宝回调，sign:{},trade_status{},参数{}",
+-                params.get("sign"),params.get("trade_status"),params.toString());
++        log.info("支付宝回调，sign:{},trade_status{},参数{}",
++                params.get("sign"), params.get("trade_status"), params.toString());
+         //rsaCheckV2验证回调的正确性，且需要避免重复通知
+         params.remove("sign_type");
+-        boolean alipayRSACheckV2 =false;
++        boolean alipayRSACheckV2 = false;
+         try {
+             alipayRSACheckV2 = AlipaySignature.rsaCheckV2(params, Configs.getAlipayPublicKey(),
+-                    "utf-8",Configs.getSignType());
++                    "utf-8", Configs.getSignType());
+ 
+         } catch (AlipayApiException e) {
+-            logger.info("支付宝回调验证出现问题",e);
++            log.info("支付宝回调验证出现问题", e);
+             e.printStackTrace();
+         }
+-        if (!alipayRSACheckV2){
++        if (!alipayRSACheckV2) {
+             return ServerResponse.createByErrorMessage("非法请求，验证不通过");
+         }
+         //todo 验证各种数据
+@@ -151,7 +149,7 @@ public class OrderController {
+         //
+         ServerResponse serverResponse = orderService.aliCallback(params);
+ 
+-        if (serverResponse.isSuccess()){
++        if (serverResponse.isSuccess()) {
+             return Const.AlipayCallBack.RESPONSE_SUCCESS;
+         }
+ 
+@@ -160,21 +158,19 @@ public class OrderController {
+ 
+     @RequestMapping("query_order_pay_status.do")
+     @ResponseBody
+-    public ServerResponse<Boolean> queryOrderPayStatus(HttpSession httpSession, Long orderNo){
++    public ServerResponse<Boolean> queryOrderPayStatus(HttpSession httpSession, Long orderNo) {
+ 
+         User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (user == null) {
+             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+         }
+ 
+-        ServerResponse response=orderService.queryOrderPayStatus(user.getId(),orderNo);
+-        if (response.isSuccess()){
++        ServerResponse response = orderService.queryOrderPayStatus(user.getId(), orderNo);
++        if (response.isSuccess()) {
+             return ServerResponse.createBySuccess(true);
+         }
+         return ServerResponse.createBySuccess(false);
+     }
+ 
+ 
+-
+-
+ }
+diff --git a/src/main/java/com/mmall/controller/portal/ProductController.java b/src/main/java/com/mmall/controller/portal/ProductController.java
+index 8854c25..135ecf1 100644
+--- a/src/main/java/com/mmall/controller/portal/ProductController.java
++++ b/src/main/java/com/mmall/controller/portal/ProductController.java
+@@ -25,12 +25,12 @@ public class ProductController {
+ 
+     @RequestMapping("list.do")
+     @ResponseBody
+-    public ServerResponse<PageInfo> list(@RequestParam(value = "keyword",required = false) String keyword,
+-                                         @RequestParam(value = "categoryId",required = false)Integer categoryId,
+-                                         @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
+-                                         @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
+-                                         @RequestParam(value = "orderBy",defaultValue = "") String orderBy){
+-        return iProductService.getProductKeywordCategory(keyword,categoryId,pageNum,pageSize,orderBy);
++    public ServerResponse<PageInfo> list(@RequestParam(value = "keyword", required = false) String keyword,
++                                         @RequestParam(value = "categoryId", required = false) Integer categoryId,
++                                         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
++                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
++                                         @RequestParam(value = "orderBy", defaultValue = "") String orderBy) {
++        return iProductService.getProductKeywordCategory(keyword, categoryId, pageNum, pageSize, orderBy);
+     }
+ 
+ }
+diff --git a/src/main/java/com/mmall/controller/portal/ShippingController.java b/src/main/java/com/mmall/controller/portal/ShippingController.java
+index af6fc7f..8277d00 100644
+--- a/src/main/java/com/mmall/controller/portal/ShippingController.java
++++ b/src/main/java/com/mmall/controller/portal/ShippingController.java
+@@ -49,11 +49,12 @@ public class ShippingController {
+         return iShippingService.update(user.getId(), shipping);
+ 
+     }
++
+     @RequestMapping("test.do")
+     @ResponseBody
+     public ServerResponse test(HttpServletRequest request) {
+         System.out.println("支付宝回调");
+-        return ServerResponse.createBySuccess("测试访问通道"+request.getParameterMap().toString());
++        return ServerResponse.createBySuccess("测试访问通道" + request.getParameterMap().toString());
+ 
+     }
+ 
+diff --git a/src/main/java/com/mmall/controller/portal/UserController.java b/src/main/java/com/mmall/controller/portal/UserController.java
+index 8cdde9a..ce06b99 100644
+--- a/src/main/java/com/mmall/controller/portal/UserController.java
++++ b/src/main/java/com/mmall/controller/portal/UserController.java
+@@ -22,6 +22,7 @@ public class UserController {
+ 
+     /**
+      * 用户注册
++     *
+      * @param username
+      * @param password
+      * @param httpSession
+@@ -41,6 +42,7 @@ public class UserController {
+ 
+     /**
+      * 退出登录
++     *
+      * @param httpSession
+      * @return
+      */
+@@ -54,15 +56,16 @@ public class UserController {
+     /**
+      * 注册
+      * username,password,email,phone,question,answer
++     *
+      * @param
+      * @return
+      */
+     @RequestMapping(value = "register.do", method = RequestMethod.POST)
+     @ResponseBody
+-    public ServerResponse<String> register(String username,String password,String email,
+-                                           String phone,String question,String answer) {
++    public ServerResponse<String> register(String username, String password, String email,
++                                           String phone, String question, String answer) {
+ 
+-        User user = new User(username,password,email,phone,question,answer);
++        User user = new User(username, password, email, phone, question, answer);
+         return iUserService.register(user);
+     }
+ 
+@@ -70,6 +73,7 @@ public class UserController {
+      * 检查用户名是否有效
+      * str,type
+      * str可以是用户名也可以是email。对应的type是 username 和 email
++     *
+      * @param str
+      * @param type
+      * @return
+@@ -145,10 +149,10 @@ public class UserController {
+     ///user/get_information.do
+     @RequestMapping(value = "get_information.do", method = RequestMethod.POST)
+     @ResponseBody
+-    public ServerResponse<User> getInformation(HttpSession httpSession){
++    public ServerResponse<User> getInformation(HttpSession httpSession) {
+         User current_user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+         if (current_user == null) {
+-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录，需强制登录");
++            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "未登录，需强制登录");
+         }
+ 
+         return iUserService.getInformation(current_user.getId());
+diff --git a/src/main/java/com/mmall/pojo/Cart.java b/src/main/java/com/mmall/pojo/Cart.java
+index fc0db5a..12206a4 100644
+--- a/src/main/java/com/mmall/pojo/Cart.java
++++ b/src/main/java/com/mmall/pojo/Cart.java
+@@ -1,7 +1,16 @@
+ package com.mmall.pojo;
+ 
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import lombok.Setter;
++
+ import java.util.Date;
+ 
++@Getter
++@Setter
++@NoArgsConstructor
++@AllArgsConstructor
+ public class Cart {
+     private Integer id;
+ 
+@@ -16,74 +25,4 @@ public class Cart {
+     private Date createTime;
+ 
+     private Date updateTime;
+-
+-    public Cart(Integer id, Integer userId, Integer productId, Integer quantity, Integer checked, Date createTime, Date updateTime) {
+-        this.id = id;
+-        this.userId = userId;
+-        this.productId = productId;
+-        this.quantity = quantity;
+-        this.checked = checked;
+-        this.createTime = createTime;
+-        this.updateTime = updateTime;
+-    }
+-
+-    public Cart() {
+-        super();
+-    }
+-
+-    public Integer getId() {
+-        return id;
+-    }
+-
+-    public void setId(Integer id) {
+-        this.id = id;
+-    }
+-
+-    public Integer getUserId() {
+-        return userId;
+-    }
+-
+-    public void setUserId(Integer userId) {
+-        this.userId = userId;
+-    }
+-
+-    public Integer getProductId() {
+-        return productId;
+-    }
+-
+-    public void setProductId(Integer productId) {
+-        this.productId = productId;
+-    }
+-
+-    public Integer getQuantity() {
+-        return quantity;
+-    }
+-
+-    public void setQuantity(Integer quantity) {
+-        this.quantity = quantity;
+-    }
+-
+-    public Integer getChecked() {
+-        return checked;
+-    }
+-
+-    public void setChecked(Integer checked) {
+-        this.checked = checked;
+-    }
+-
+-    public Date getCreateTime() {
+-        return createTime;
+-    }
+-
+-    public void setCreateTime(Date createTime) {
+-        this.createTime = createTime;
+-    }
+-
+-    public Date getUpdateTime() {
+-        return updateTime;
+-    }
+-
+-    public void setUpdateTime(Date updateTime) {
+-        this.updateTime = updateTime;
+-    }
+ }
+\ No newline at end of file
+diff --git a/src/main/java/com/mmall/pojo/Category.java b/src/main/java/com/mmall/pojo/Category.java
+index 7212b01..6b39ae8 100644
+--- a/src/main/java/com/mmall/pojo/Category.java
++++ b/src/main/java/com/mmall/pojo/Category.java
+@@ -1,8 +1,14 @@
+ package com.mmall.pojo;
+ 
++import lombok.*;
++
+ import java.util.Date;
+-import java.util.Objects;
+ 
++@Getter
++@Setter
++@NoArgsConstructor
++@AllArgsConstructor
++@EqualsAndHashCode(of = "id")
+ public class Category {
+     private Integer id;
+ 
+@@ -18,87 +24,4 @@ public class Category {
+ 
+     private Date updateTime;
+ 
+-    public Category(Integer id, Integer parentId, String name, Boolean status, Integer sortOrder, Date createTime, Date updateTime) {
+-        this.id = id;
+-        this.parentId = parentId;
+-        this.name = name;
+-        this.status = status;
+-        this.sortOrder = sortOrder;
+-        this.createTime = createTime;
+-        this.updateTime = updateTime;
+-    }
+-
+-    public Category() {
+-        super();
+-    }
+-
+-    public Integer getId() {
+-        return id;
+-    }
+-
+-    public void setId(Integer id) {
+-        this.id = id;
+-    }
+-
+-    public Integer getParentId() {
+-        return parentId;
+-    }
+-
+-    public void setParentId(Integer parentId) {
+-        this.parentId = parentId;
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public void setName(String name) {
+-        this.name = name == null ? null : name.trim();
+-    }
+-
+-    public Boolean getStatus() {
+-        return status;
+-    }
+-
+-    public void setStatus(Boolean status) {
+-        this.status = status;
+-    }
+-
+-    public Integer getSortOrder() {
+-        return sortOrder;
+-    }
+-
+-    public void setSortOrder(Integer sortOrder) {
+-        this.sortOrder = sortOrder;
+-    }
+-
+-    public Date getCreateTime() {
+-        return createTime;
+-    }
+-
+-    public void setCreateTime(Date createTime) {
+-        this.createTime = createTime;
+-    }
+-
+-    public Date getUpdateTime() {
+-        return updateTime;
+-    }
+-
+-    public void setUpdateTime(Date updateTime) {
+-        this.updateTime = updateTime;
+-    }
+-
+-    @Override
+-    public boolean equals(Object o) {
+-        if (this == o) return true;
+-        if (!(o instanceof Category)) return false;
+-        Category category = (Category) o;
+-        return Objects.equals(getId(), category.getId());
+-    }
+-
+-    @Override
+-    public int hashCode() {
+-
+-        return Objects.hash(getId());
+-    }
+ }
+\ No newline at end of file
+diff --git a/src/main/java/com/mmall/pojo/Order.java b/src/main/java/com/mmall/pojo/Order.java
+index 77e03bd..070a713 100644
+--- a/src/main/java/com/mmall/pojo/Order.java
++++ b/src/main/java/com/mmall/pojo/Order.java
+@@ -1,8 +1,17 @@
+ package com.mmall.pojo;
+ 
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import lombok.Setter;
++
+ import java.math.BigDecimal;
+ import java.util.Date;
+ 
++@Getter
++@Setter
++@AllArgsConstructor
++@NoArgsConstructor
+ public class Order {
+     private Integer id;
+ 
+@@ -32,136 +41,5 @@ public class Order {
+ 
+     private Date updateTime;
+ 
+-    public Order(Integer id, Long orderNo, Integer userId, Integer shippingId, BigDecimal payment, Integer paymentType, Integer postage, Integer status, Date paymentTime, Date sendTime, Date endTime, Date closeTime, Date createTime, Date updateTime) {
+-        this.id = id;
+-        this.orderNo = orderNo;
+-        this.userId = userId;
+-        this.shippingId = shippingId;
+-        this.payment = payment;
+-        this.paymentType = paymentType;
+-        this.postage = postage;
+-        this.status = status;
+-        this.paymentTime = paymentTime;
+-        this.sendTime = sendTime;
+-        this.endTime = endTime;
+-        this.closeTime = closeTime;
+-        this.createTime = createTime;
+-        this.updateTime = updateTime;
+-    }
+-
+-    public Order() {
+-        super();
+-    }
+-
+-    public Integer getId() {
+-        return id;
+-    }
+-
+-    public void setId(Integer id) {
+-        this.id = id;
+-    }
+-
+-    public Long getOrderNo() {
+-        return orderNo;
+-    }
+-
+-    public void setOrderNo(Long orderNo) {
+-        this.orderNo = orderNo;
+-    }
+-
+-    public Integer getUserId() {
+-        return userId;
+-    }
+-
+-    public void setUserId(Integer userId) {
+-        this.userId = userId;
+-    }
+-
+-    public Integer getShippingId() {
+-        return shippingId;
+-    }
+-
+-    public void setShippingId(Integer shippingId) {
+-        this.shippingId = shippingId;
+-    }
+-
+-    public BigDecimal getPayment() {
+-        return payment;
+-    }
+-
+-    public void setPayment(BigDecimal payment) {
+-        this.payment = payment;
+-    }
+-
+-    public Integer getPaymentType() {
+-        return paymentType;
+-    }
+-
+-    public void setPaymentType(Integer paymentType) {
+-        this.paymentType = paymentType;
+-    }
+-
+-    public Integer getPostage() {
+-        return postage;
+-    }
+-
+-    public void setPostage(Integer postage) {
+-        this.postage = postage;
+-    }
+-
+-    public Integer getStatus() {
+-        return status;
+-    }
+-
+-    public void setStatus(Integer status) {
+-        this.status = status;
+-    }
+-
+-    public Date getPaymentTime() {
+-        return paymentTime;
+-    }
+-
+-    public void setPaymentTime(Date paymentTime) {
+-        this.paymentTime = paymentTime;
+-    }
+-
+-    public Date getSendTime() {
+-        return sendTime;
+-    }
+-
+-    public void setSendTime(Date sendTime) {
+-        this.sendTime = sendTime;
+-    }
+-
+-    public Date getEndTime() {
+-        return endTime;
+-    }
+-
+-    public void setEndTime(Date endTime) {
+-        this.endTime = endTime;
+-    }
+-
+-    public Date getCloseTime() {
+-        return closeTime;
+-    }
+-
+-    public void setCloseTime(Date closeTime) {
+-        this.closeTime = closeTime;
+-    }
+-
+-    public Date getCreateTime() {
+-        return createTime;
+-    }
+-
+-    public void setCreateTime(Date createTime) {
+-        this.createTime = createTime;
+-    }
+-
+-    public Date getUpdateTime() {
+-        return updateTime;
+-    }
+ 
+-    public void setUpdateTime(Date updateTime) {
+-        this.updateTime = updateTime;
+-    }
+ }
+\ No newline at end of file
+diff --git a/src/main/java/com/mmall/pojo/OrderItem.java b/src/main/java/com/mmall/pojo/OrderItem.java
+index fab078c..8c7c330 100644
+--- a/src/main/java/com/mmall/pojo/OrderItem.java
++++ b/src/main/java/com/mmall/pojo/OrderItem.java
+@@ -1,8 +1,17 @@
+ package com.mmall.pojo;
+ 
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import lombok.Setter;
++
+ import java.math.BigDecimal;
+ import java.util.Date;
+ 
++@Getter
++@Setter
++@AllArgsConstructor
++@NoArgsConstructor
+ public class OrderItem {
+     private Integer id;
+ 
+@@ -26,109 +35,4 @@ public class OrderItem {
+ 
+     private Date updateTime;
+ 
+-    public OrderItem(Integer id, Integer userId, Long orderNo, Integer productId, String productName, String productImage, BigDecimal currentUnitPrice, Integer quantity, BigDecimal totalPrice, Date createTime, Date updateTime) {
+-        this.id = id;
+-        this.userId = userId;
+-        this.orderNo = orderNo;
+-        this.productId = productId;
+-        this.productName = productName;
+-        this.productImage = productImage;
+-        this.currentUnitPrice = currentUnitPrice;
+-        this.quantity = quantity;
+-        this.totalPrice = totalPrice;
+-        this.createTime = createTime;
+-        this.updateTime = updateTime;
+-    }
+-
+-    public OrderItem() {
+-        super();
+-    }
+-
+-    public Integer getId() {
+-        return id;
+-    }
+-
+-    public void setId(Integer id) {
+-        this.id = id;
+-    }
+-
+-    public Integer getUserId() {
+-        return userId;
+-    }
+-
+-    public void setUserId(Integer userId) {
+-        this.userId = userId;
+-    }
+-
+-    public Long getOrderNo() {
+-        return orderNo;
+-    }
+-
+-    public void setOrderNo(Long orderNo) {
+-        this.orderNo = orderNo;
+-    }
+-
+-    public Integer getProductId() {
+-        return productId;
+-    }
+-
+-    public void setProductId(Integer productId) {
+-        this.productId = productId;
+-    }
+-
+-    public String getProductName() {
+-        return productName;
+-    }
+-
+-    public void setProductName(String productName) {
+-        this.productName = productName == null ? null : productName.trim();
+-    }
+-
+-    public String getProductImage() {
+-        return productImage;
+-    }
+-
+-    public void setProductImage(String productImage) {
+-        this.productImage = productImage == null ? null : productImage.trim();
+-    }
+-
+-    public BigDecimal getCurrentUnitPrice() {
+-        return currentUnitPrice;
+-    }
+-
+-    public void setCurrentUnitPrice(BigDecimal currentUnitPrice) {
+-        this.currentUnitPrice = currentUnitPrice;
+-    }
+-
+-    public Integer getQuantity() {
+-        return quantity;
+-    }
+-
+-    public void setQuantity(Integer quantity) {
+-        this.quantity = quantity;
+-    }
+-
+-    public BigDecimal getTotalPrice() {
+-        return totalPrice;
+-    }
+-
+-    public void setTotalPrice(BigDecimal totalPrice) {
+-        this.totalPrice = totalPrice;
+-    }
+-
+-    public Date getCreateTime() {
+-        return createTime;
+-    }
+-
+-    public void setCreateTime(Date createTime) {
+-        this.createTime = createTime;
+-    }
+-
+-    public Date getUpdateTime() {
+-        return updateTime;
+-    }
+-
+-    public void setUpdateTime(Date updateTime) {
+-        this.updateTime = updateTime;
+-    }
+ }
+\ No newline at end of file
+diff --git a/src/main/java/com/mmall/pojo/PayInfo.java b/src/main/java/com/mmall/pojo/PayInfo.java
+index 924ce59..6b2d81a 100644
+--- a/src/main/java/com/mmall/pojo/PayInfo.java
++++ b/src/main/java/com/mmall/pojo/PayInfo.java
+@@ -1,7 +1,16 @@
+ package com.mmall.pojo;
+ 
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import lombok.Setter;
++
+ import java.util.Date;
+ 
++@Getter
++@Setter
++@AllArgsConstructor
++@NoArgsConstructor
+ public class PayInfo {
+     private Integer id;
+ 
+@@ -19,82 +28,5 @@ public class PayInfo {
+ 
+     private Date updateTime;
+ 
+-    public PayInfo(Integer id, Integer userId, Long orderNo, Integer payPlatform, String platformNumber, String platformStatus, Date createTime, Date updateTime) {
+-        this.id = id;
+-        this.userId = userId;
+-        this.orderNo = orderNo;
+-        this.payPlatform = payPlatform;
+-        this.platformNumber = platformNumber;
+-        this.platformStatus = platformStatus;
+-        this.createTime = createTime;
+-        this.updateTime = updateTime;
+-    }
+-
+-    public PayInfo() {
+-        super();
+-    }
+-
+-    public Integer getId() {
+-        return id;
+-    }
+-
+-    public void setId(Integer id) {
+-        this.id = id;
+-    }
+-
+-    public Integer getUserId() {
+-        return userId;
+-    }
+-
+-    public void setUserId(Integer userId) {
+-        this.userId = userId;
+-    }
+-
+-    public Long getOrderNo() {
+-        return orderNo;
+-    }
+-
+-    public void setOrderNo(Long orderNo) {
+-        this.orderNo = orderNo;
+-    }
+-
+-    public Integer getPayPlatform() {
+-        return payPlatform;
+-    }
+-
+-    public void setPayPlatform(Integer payPlatform) {
+-        this.payPlatform = payPlatform;
+-    }
+-
+-    public String getPlatformNumber() {
+-        return platformNumber;
+-    }
+-
+-    public void setPlatformNumber(String platformNumber) {
+-        this.platformNumber = platformNumber == null ? null : platformNumber.trim();
+-    }
+-
+-    public String getPlatformStatus() {
+-        return platformStatus;
+-    }
+-
+-    public void setPlatformStatus(String platformStatus) {
+-        this.platformStatus = platformStatus == null ? null : platformStatus.trim();
+-    }
+-
+-    public Date getCreateTime() {
+-        return createTime;
+-    }
+-
+-    public void setCreateTime(Date createTime) {
+-        this.createTime = createTime;
+-    }
+-
+-    public Date getUpdateTime() {
+-        return updateTime;
+-    }
+ 
+-    public void setUpdateTime(Date updateTime) {
+-        this.updateTime = updateTime;
+-    }
+ }
+\ No newline at end of file
+diff --git a/src/main/java/com/mmall/pojo/Product.java b/src/main/java/com/mmall/pojo/Product.java
+index cd6fbf7..30c8186 100644
+--- a/src/main/java/com/mmall/pojo/Product.java
++++ b/src/main/java/com/mmall/pojo/Product.java
+@@ -1,8 +1,17 @@
+ package com.mmall.pojo;
+ 
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import lombok.Setter;
++
+ import java.math.BigDecimal;
+ import java.util.Date;
+ 
++@Getter
++@Setter
++@AllArgsConstructor
++@NoArgsConstructor
+ public class Product {
+     private Integer id;
+ 
+@@ -28,118 +37,5 @@ public class Product {
+ 
+     private Date updateTime;
+ 
+-    public Product(Integer id, Integer categoryId, String name, String subtitle, String mainImage, String subImages, String detail, BigDecimal price, Integer stock, Integer status, Date createTime, Date updateTime) {
+-        this.id = id;
+-        this.categoryId = categoryId;
+-        this.name = name;
+-        this.subtitle = subtitle;
+-        this.mainImage = mainImage;
+-        this.subImages = subImages;
+-        this.detail = detail;
+-        this.price = price;
+-        this.stock = stock;
+-        this.status = status;
+-        this.createTime = createTime;
+-        this.updateTime = updateTime;
+-    }
+-
+-    public Product() {
+-        super();
+-    }
+-
+-    public Integer getId() {
+-        return id;
+-    }
+-
+-    public void setId(Integer id) {
+-        this.id = id;
+-    }
+-
+-    public Integer getCategoryId() {
+-        return categoryId;
+-    }
+-
+-    public void setCategoryId(Integer categoryId) {
+-        this.categoryId = categoryId;
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public void setName(String name) {
+-        this.name = name == null ? null : name.trim();
+-    }
+-
+-    public String getSubtitle() {
+-        return subtitle;
+-    }
+-
+-    public void setSubtitle(String subtitle) {
+-        this.subtitle = subtitle == null ? null : subtitle.trim();
+-    }
+-
+-    public String getMainImage() {
+-        return mainImage;
+-    }
+-
+-    public void setMainImage(String mainImage) {
+-        this.mainImage = mainImage == null ? null : mainImage.trim();
+-    }
+-
+-    public String getSubImages() {
+-        return subImages;
+-    }
+-
+-    public void setSubImages(String subImages) {
+-        this.subImages = subImages == null ? null : subImages.trim();
+-    }
+-
+-    public String getDetail() {
+-        return detail;
+-    }
+-
+-    public void setDetail(String detail) {
+-        this.detail = detail == null ? null : detail.trim();
+-    }
+-
+-    public BigDecimal getPrice() {
+-        return price;
+-    }
+-
+-    public void setPrice(BigDecimal price) {
+-        this.price = price;
+-    }
+-
+-    public Integer getStock() {
+-        return stock;
+-    }
+-
+-    public void setStock(Integer stock) {
+-        this.stock = stock;
+-    }
+-
+-    public Integer getStatus() {
+-        return status;
+-    }
+-
+-    public void setStatus(Integer status) {
+-        this.status = status;
+-    }
+-
+-    public Date getCreateTime() {
+-        return createTime;
+-    }
+-
+-    public void setCreateTime(Date createTime) {
+-        this.createTime = createTime;
+-    }
+-
+-    public Date getUpdateTime() {
+-        return updateTime;
+-    }
+-
+-    public void setUpdateTime(Date updateTime) {
+-        this.updateTime = updateTime;
+-    }
++
+ }
+\ No newline at end of file
+diff --git a/src/main/java/com/mmall/pojo/Shipping.java b/src/main/java/com/mmall/pojo/Shipping.java
+index 51575bc..9d2bd8c 100644
+--- a/src/main/java/com/mmall/pojo/Shipping.java
++++ b/src/main/java/com/mmall/pojo/Shipping.java
+@@ -1,7 +1,16 @@
+ package com.mmall.pojo;
+ 
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import lombok.Setter;
++
+ import java.util.Date;
+ 
++@Getter
++@Setter
++@AllArgsConstructor
++@NoArgsConstructor
+ public class Shipping {
+     private Integer id;
+ 
+@@ -26,119 +35,4 @@ public class Shipping {
+     private Date createTime;
+ 
+     private Date updateTime;
+-
+-    public Shipping(Integer id, Integer userId, String receiverName, String receiverPhone, String receiverMobile, String receiverProvince, String receiverCity, String receiverDistrict, String receiverAddress, String receiverZip, Date createTime, Date updateTime) {
+-        this.id = id;
+-        this.userId = userId;
+-        this.receiverName = receiverName;
+-        this.receiverPhone = receiverPhone;
+-        this.receiverMobile = receiverMobile;
+-        this.receiverProvince = receiverProvince;
+-        this.receiverCity = receiverCity;
+-        this.receiverDistrict = receiverDistrict;
+-        this.receiverAddress = receiverAddress;
+-        this.receiverZip = receiverZip;
+-        this.createTime = createTime;
+-        this.updateTime = updateTime;
+-    }
+-
+-    public Shipping() {
+-        super();
+-    }
+-
+-    public Integer getId() {
+-        return id;
+-    }
+-
+-    public void setId(Integer id) {
+-        this.id = id;
+-    }
+-
+-    public Integer getUserId() {
+-        return userId;
+-    }
+-
+-    public void setUserId(Integer userId) {
+-        this.userId = userId;
+-    }
+-
+-    public String getReceiverName() {
+-        return receiverName;
+-    }
+-
+-    public void setReceiverName(String receiverName) {
+-        this.receiverName = receiverName == null ? null : receiverName.trim();
+-    }
+-
+-    public String getReceiverPhone() {
+-        return receiverPhone;
+-    }
+-
+-    public void setReceiverPhone(String receiverPhone) {
+-        this.receiverPhone = receiverPhone == null ? null : receiverPhone.trim();
+-    }
+-
+-    public String getReceiverMobile() {
+-        return receiverMobile;
+-    }
+-
+-    public void setReceiverMobile(String receiverMobile) {
+-        this.receiverMobile = receiverMobile == null ? null : receiverMobile.trim();
+-    }
+-
+-    public String getReceiverProvince() {
+-        return receiverProvince;
+-    }
+-
+-    public void setReceiverProvince(String receiverProvince) {
+-        this.receiverProvince = receiverProvince == null ? null : receiverProvince.trim();
+-    }
+-
+-    public String getReceiverCity() {
+-        return receiverCity;
+-    }
+-
+-    public void setReceiverCity(String receiverCity) {
+-        this.receiverCity = receiverCity == null ? null : receiverCity.trim();
+-    }
+-
+-    public String getReceiverDistrict() {
+-        return receiverDistrict;
+-    }
+-
+-    public void setReceiverDistrict(String receiverDistrict) {
+-        this.receiverDistrict = receiverDistrict == null ? null : receiverDistrict.trim();
+-    }
+-
+-    public String getReceiverAddress() {
+-        return receiverAddress;
+-    }
+-
+-    public void setReceiverAddress(String receiverAddress) {
+-        this.receiverAddress = receiverAddress == null ? null : receiverAddress.trim();
+-    }
+-
+-    public String getReceiverZip() {
+-        return receiverZip;
+-    }
+-
+-    public void setReceiverZip(String receiverZip) {
+-        this.receiverZip = receiverZip == null ? null : receiverZip.trim();
+-    }
+-
+-    public Date getCreateTime() {
+-        return createTime;
+-    }
+-
+-    public void setCreateTime(Date createTime) {
+-        this.createTime = createTime;
+-    }
+-
+-    public Date getUpdateTime() {
+-        return updateTime;
+-    }
+-
+-    public void setUpdateTime(Date updateTime) {
+-        this.updateTime = updateTime;
+-    }
+ }
+\ No newline at end of file
+diff --git a/src/main/java/com/mmall/pojo/User.java b/src/main/java/com/mmall/pojo/User.java
+index fbaf916..3820fa9 100644
+--- a/src/main/java/com/mmall/pojo/User.java
++++ b/src/main/java/com/mmall/pojo/User.java
+@@ -1,9 +1,16 @@
+ package com.mmall.pojo;
+ 
+-import com.mmall.common.Const;
++import lombok.AllArgsConstructor;
++import lombok.Getter;
++import lombok.NoArgsConstructor;
++import lombok.Setter;
+ 
+ import java.util.Date;
+ 
++@Getter
++@Setter
++@AllArgsConstructor
++@NoArgsConstructor
+ public class User {
+     private Integer id;
+ 
+@@ -25,19 +32,6 @@ public class User {
+ 
+     private Date updateTime;
+ 
+-    public User(Integer id, String username, String password, String email, String phone, String question, String answer, Integer role, Date createTime, Date updateTime) {
+-        this.id = id;
+-        this.username = username;
+-        this.password = password;
+-        this.email = email;
+-        this.phone = phone;
+-        this.question = question;
+-        this.answer = answer;
+-        this.role = role;
+-        this.createTime = createTime;
+-        this.updateTime = updateTime;
+-    }
+-
+     public User(String username, String password, String email, String phone, String question, String answer) {
+         this.username = username;
+         this.password = password;
+@@ -46,88 +40,4 @@ public class User {
+         this.question = question;
+         this.answer = answer;
+     }
+-
+-    public User() {
+-        super();
+-    }
+-
+-    public Integer getId() {
+-        return id;
+-    }
+-
+-    public void setId(Integer id) {
+-        this.id = id;
+-    }
+-
+-    public String getUsername() {
+-        return username;
+-    }
+-
+-    public void setUsername(String username) {
+-        this.username = username == null ? null : username.trim();
+-    }
+-
+-    public String getPassword() {
+-        return password;
+-    }
+-
+-    public void setPassword(String password) {
+-        this.password = password == null ? null : password.trim();
+-    }
+-
+-    public String getEmail() {
+-        return email;
+-    }
+-
+-    public void setEmail(String email) {
+-        this.email = email == null ? null : email.trim();
+-    }
+-
+-    public String getPhone() {
+-        return phone;
+-    }
+-
+-    public void setPhone(String phone) {
+-        this.phone = phone == null ? null : phone.trim();
+-    }
+-
+-    public String getQuestion() {
+-        return question;
+-    }
+-
+-    public void setQuestion(String question) {
+-        this.question = question == null ? null : question.trim();
+-    }
+-
+-    public String getAnswer() {
+-        return answer;
+-    }
+-
+-    public void setAnswer(String answer) {
+-        this.answer = answer == null ? null : answer.trim();
+-    }
+-
+-    public Integer getRole() {
+-        return role;
+-    }
+-
+-    public void setRole(Integer role) {
+-        this.role = role;
+-    }
+-
+-    public Date getCreateTime() {
+-        return createTime;
+-    }
+-
+-    public void setCreateTime(Date createTime) {
+-        this.createTime = createTime;
+-    }
+-
+-    public Date getUpdateTime() {
+-        return updateTime;
+-    }
+-
+-    public void setUpdateTime(Date updateTime) {
+-        this.updateTime = updateTime;
+-    }
+ }
+\ No newline at end of file
+diff --git a/src/main/java/com/mmall/service/impl/CartServiceImpl.java b/src/main/java/com/mmall/service/impl/CartServiceImpl.java
+index ca3d920..5658bce 100644
+--- a/src/main/java/com/mmall/service/impl/CartServiceImpl.java
++++ b/src/main/java/com/mmall/service/impl/CartServiceImpl.java
+@@ -14,19 +14,18 @@ import com.mmall.util.BigDecimalUtil;
+ import com.mmall.util.PropertiesUtil;
+ import com.mmall.vo.CartProductVo;
+ import com.mmall.vo.CartVo;
++import lombok.extern.slf4j.Slf4j;
+ import org.apache.commons.collections.CollectionUtils;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
+ import java.math.BigDecimal;
+ import java.util.List;
+ 
++@Slf4j
+ @Service("iCartService")
+ public class CartServiceImpl implements ICartService {
+ 
+-    private Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
+ 
+     @Autowired
+     private CartMapper cartMapper;
+@@ -168,7 +167,7 @@ public class CartServiceImpl implements ICartService {
+                 } else {
+                     //product未查找到，需要确认productId是否存在问题？会使得后续的cartProductVo部分填充为null
+                     //这里可以手动抛出异常，调用方法收到异常后提示productId存在问题
+-                    logger.info("使用productId未搜索到该产品", cartItem.getProductId());
++                    log.info("使用productId未搜索到该产品", cartItem.getProductId());
+                     cartProductVo.setProductTotalPrice(new BigDecimal("0"));
+                 }
+ 
+diff --git a/src/main/java/com/mmall/service/impl/CategoryServiceImpl.java b/src/main/java/com/mmall/service/impl/CategoryServiceImpl.java
+index 89958dc..c7ad307 100644
+--- a/src/main/java/com/mmall/service/impl/CategoryServiceImpl.java
++++ b/src/main/java/com/mmall/service/impl/CategoryServiceImpl.java
+@@ -6,9 +6,8 @@ import com.mmall.common.ServerResponse;
+ import com.mmall.dao.CategoryMapper;
+ import com.mmall.pojo.Category;
+ import com.mmall.service.ICategoryService;
++import lombok.extern.slf4j.Slf4j;
+ import org.apache.commons.lang3.StringUtils;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ import org.springframework.util.CollectionUtils;
+@@ -16,12 +15,10 @@ import org.springframework.util.CollectionUtils;
+ import java.util.List;
+ import java.util.Set;
+ 
++@Slf4j
+ @Service("ICategoryService")
+ public class CategoryServiceImpl implements ICategoryService {
+ 
+-
+-    private Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
+-
+     @Autowired
+     private CategoryMapper categoryMapper;
+ 
+@@ -64,7 +61,7 @@ public class CategoryServiceImpl implements ICategoryService {
+     public ServerResponse<List<Category>> getChikdrenParallelCategory(Integer integer) {
+         List<Category> categoryList = categoryMapper.selectCategoryChidrenByParentId(integer);
+         if (CollectionUtils.isEmpty(categoryList)) {
+-            logger.info("未找到当前分类的子分类");
++            log.info("未找到当前分类的子分类");
+         }
+         return ServerResponse.createBySuccess(categoryList);
+     }
+@@ -72,6 +69,7 @@ public class CategoryServiceImpl implements ICategoryService {
+ 
+     /**
+      * 递归查询本节点的孩子节点
++     *
+      * @param categoryId
+      * @return
+      */
+@@ -104,6 +102,5 @@ public class CategoryServiceImpl implements ICategoryService {
+         return categorySet;
+     }
+ 
+-    
+ 
+ }
+diff --git a/src/main/java/com/mmall/service/impl/FileServiceImpl.java b/src/main/java/com/mmall/service/impl/FileServiceImpl.java
+index 211b393..dc15756 100644
+--- a/src/main/java/com/mmall/service/impl/FileServiceImpl.java
++++ b/src/main/java/com/mmall/service/impl/FileServiceImpl.java
+@@ -3,8 +3,7 @@ package com.mmall.service.impl;
+ import com.google.common.collect.Lists;
+ import com.mmall.service.IFileService;
+ import com.mmall.util.FTPUtil;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
++import lombok.extern.slf4j.Slf4j;
+ import org.springframework.stereotype.Service;
+ import org.springframework.web.multipart.MultipartFile;
+ 
+@@ -12,10 +11,10 @@ import java.io.File;
+ import java.io.IOException;
+ import java.util.UUID;
+ 
++@Slf4j
+ @Service("iFileService")
+ public class FileServiceImpl implements IFileService {
+ 
+-    private Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
+ 
+     public String upload(MultipartFile file, String path) {
+         String fileName = file.getOriginalFilename();
+@@ -23,7 +22,7 @@ public class FileServiceImpl implements IFileService {
+         String fileExtendsionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+         //对源文件进行重命名
+         String uploadFileName = UUID.randomUUID().toString() + "." + fileExtendsionName;
+-        logger.info("开始上传文件，上传文件名为：{},上传路径:{},新文件名{}", fileName, path, uploadFileName);
++        log.info("开始上传文件，上传文件名为：{},上传路径:{},新文件名{}", fileName, path, uploadFileName);
+ 
+         File fileDir = new File(path);
+         if (!fileDir.exists()) {
+@@ -45,7 +44,7 @@ public class FileServiceImpl implements IFileService {
+             targetFile.delete();
+ 
+         } catch (IOException e) {
+-            logger.error("文件上传异常", e);
++            log.error("文件上传异常", e);
+             e.printStackTrace();
+             return null;
+         }
+diff --git a/src/main/java/com/mmall/service/impl/OrderServiceImpl.java b/src/main/java/com/mmall/service/impl/OrderServiceImpl.java
+index fa19dbc..f360b32 100644
+--- a/src/main/java/com/mmall/service/impl/OrderServiceImpl.java
++++ b/src/main/java/com/mmall/service/impl/OrderServiceImpl.java
+@@ -27,10 +27,9 @@ import com.mmall.vo.OrderItemVo;
+ import com.mmall.vo.OrderProductVo;
+ import com.mmall.vo.OrderVo;
+ import com.mmall.vo.ShippingVo;
++import lombok.extern.slf4j.Slf4j;
+ import org.apache.commons.collections.CollectionUtils;
+ import org.apache.commons.lang.StringUtils;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
+@@ -40,10 +39,10 @@ import java.math.BigDecimal;
+ import java.util.*;
+ 
+ 
++@Slf4j
+ @Service("iOrderService")
+ public class OrderServiceImpl implements IOrderService {
+ 
+-    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+ 
+     @Autowired
+     private OrderMapper orderMapper;
+@@ -67,7 +66,7 @@ public class OrderServiceImpl implements IOrderService {
+ 
+         PageHelper.startPage(pageNum, pageSize);
+         List<Order> orderList = orderMapper.selectByUserId(userId);
+-        List<OrderVo> orderVoList = this.assembleOrderVoList(orderList,userId);
++        List<OrderVo> orderVoList = this.assembleOrderVoList(orderList, userId);
+ 
+         PageInfo pageRes = new PageInfo(orderList);
+         pageRes.setList(orderVoList);
+@@ -267,18 +266,18 @@ public class OrderServiceImpl implements IOrderService {
+         return null;
+     }
+ 
+-    private List<OrderVo> assembleOrderVoList(List<Order> orderList,Integer userId) {
++    private List<OrderVo> assembleOrderVoList(List<Order> orderList, Integer userId) {
+         List<OrderVo> orderVoList = Lists.newArrayList();
+ 
+         for (Order order : orderList) {
+             List<OrderItem> orderItemList = Lists.newArrayList();
+-            if(userId == null){
++            if (userId == null) {
+                 //管理员查询时不需要传userId
+                 orderItemList = orderItemMapper.getByOrderno(order.getOrderNo());
+-            }else {
+-                orderItemList = orderItemMapper.getByOrdernoAndUserId(order.getOrderNo(),userId);
++            } else {
++                orderItemList = orderItemMapper.getByOrdernoAndUserId(order.getOrderNo(), userId);
+             }
+-            OrderVo orderVo = this.assembleOrderVo(order,orderItemList);
++            OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+             orderVoList.add(orderVo);
+         }
+ 
+@@ -308,8 +307,8 @@ public class OrderServiceImpl implements IOrderService {
+         for (Cart item : cartList) {
+             OrderItem orderItem = new OrderItem();
+             Product product = productMapper.selectByPrimaryKey(item.getProductId());
+-            if(product == null){
+-                System.out.println("未搜索到此产品"+item.getProductId());
++            if (product == null) {
++                System.out.println("未搜索到此产品" + item.getProductId());
+                 continue;
+             }
+ 
+@@ -420,7 +419,7 @@ public class OrderServiceImpl implements IOrderService {
+         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
+         switch (result.getTradeStatus()) {
+             case SUCCESS:
+-                logger.info("支付宝预下单成功: )");
++                log.info("支付宝预下单成功: )");
+ 
+                 AlipayTradePrecreateResponse response = result.getResponse();
+                 dumpResponse(response);
+@@ -443,10 +442,10 @@ public class OrderServiceImpl implements IOrderService {
+ 
+                     FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+                 } catch (IOException e) {
+-                    logger.info("上传二维码异常", e);
++                    log.info("上传二维码异常", e);
+                     e.printStackTrace();
+                 }
+-                logger.info("targetFile.getName():" + targetFile.getName());
++                log.info("targetFile.getName():" + targetFile.getName());
+ 
+                 //上传到服务器上的地址
+                 String qrUrl = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName();
+@@ -454,15 +453,15 @@ public class OrderServiceImpl implements IOrderService {
+                 return ServerResponse.createBySuccess(resMap);
+ 
+             case FAILED:
+-                logger.error("支付宝预下单失败!!!");
++                log.error("支付宝预下单失败!!!");
+                 return ServerResponse.createByErrorMessage("支付宝预下单失败!!!");
+ 
+             case UNKNOWN:
+-                logger.error("系统异常，预下单状态未知!!!");
++                log.error("系统异常，预下单状态未知!!!");
+                 return ServerResponse.createByErrorMessage("系统异常，预下单状态未知!!!");
+ 
+             default:
+-                logger.error("不支持的交易状态，交易返回异常!!!");
++                log.error("不支持的交易状态，交易返回异常!!!");
+                 return ServerResponse.createByErrorMessage("不支持的交易状态，交易返回异常!!!");
+         }
+ 
+@@ -511,67 +510,67 @@ public class OrderServiceImpl implements IOrderService {
+     // 简单打印应答
+     public void dumpResponse(AlipayResponse response) {
+         if (response != null) {
+-            logger.info(String.format("code:%s, msg:%s", response.getCode(), response.getMsg()));
++            log.info(String.format("code:%s, msg:%s", response.getCode(), response.getMsg()));
+             if (StringUtils.isNotEmpty(response.getSubCode())) {
+-                logger.info(String.format("subCode:%s, subMsg:%s", response.getSubCode(),
++                log.info(String.format("subCode:%s, subMsg:%s", response.getSubCode(),
+                         response.getSubMsg()));
+             }
+-            logger.info("body:" + response.getBody());
++            log.info("body:" + response.getBody());
+         }
+     }
+ 
+     //backend
+-    public ServerResponse<PageInfo> managerList(int pageNum,int pageSize){
+-        PageHelper.startPage(pageNum,pageSize);
++    public ServerResponse<PageInfo> managerList(int pageNum, int pageSize) {
++        PageHelper.startPage(pageNum, pageSize);
+         List<Order> orderList = orderMapper.selectAllOrder();
+-        List<OrderVo> orderVoList = this.assembleOrderVoList(orderList,null);
++        List<OrderVo> orderVoList = this.assembleOrderVoList(orderList, null);
+ 
+         PageInfo pageRes = new PageInfo(orderList);
+         pageRes.setList(orderVoList);
+         return ServerResponse.createBySuccess(pageRes);
+     }
+ 
+-    public ServerResponse<OrderVo> managerDetail(Long orderNo){
++    public ServerResponse<OrderVo> managerDetail(Long orderNo) {
+ 
+         Order order = orderMapper.selectOrderNo(orderNo);
+-        if (order == null){
++        if (order == null) {
+             return ServerResponse.createByErrorMessage("订单不存在");
+         }
+         List<OrderItem> orderItemList = orderItemMapper.getByOrderno(orderNo);
+-        OrderVo orderVo = this.assembleOrderVo(order,orderItemList);
++        OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+         return ServerResponse.createBySuccess(orderVo);
+     }
+ 
+-    public ServerResponse<PageInfo> managerSearch(Long orderNo,int pageNum,int pageSize){
+-        PageHelper.startPage(pageNum,pageSize);
++    public ServerResponse<PageInfo> managerSearch(Long orderNo, int pageNum, int pageSize) {
++        PageHelper.startPage(pageNum, pageSize);
+ 
+ 
+         Order order = orderMapper.selectOrderNo(orderNo);
+-        if (order == null){
++        if (order == null) {
+             return ServerResponse.createByErrorMessage("订单不存在");
+         }
+         List<OrderItem> orderItemList = orderItemMapper.getByOrderno(orderNo);
+-        OrderVo orderVo = this.assembleOrderVo(order,orderItemList);
++        OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+         PageInfo pageRes = new PageInfo(Lists.newArrayList(order));
+         pageRes.setList(Lists.newArrayList(orderVo));
+         return ServerResponse.createBySuccess(pageRes);
+     }
+ 
+-    public ServerResponse<String> managerSendGoods(Long orderNo){
++    public ServerResponse<String> managerSendGoods(Long orderNo) {
+         Order order = orderMapper.selectOrderNo(orderNo);
+-        if (order == null){
++        if (order == null) {
+             return ServerResponse.createByErrorMessage("订单不存在");
+         }
+-        if (order.getStatus() == Const.OrderStatusEnum.PAID.getCode()){
++        if (order.getStatus() == Const.OrderStatusEnum.PAID.getCode()) {
+             order.setStatus(Const.OrderStatusEnum.SHIPPED.getCode());
+             order.setSendTime(new Date());
+-            int rowCount =orderMapper.updateByPrimaryKeySelective(order);
+-            if(rowCount > 0){
++            int rowCount = orderMapper.updateByPrimaryKeySelective(order);
++            if (rowCount > 0) {
+                 return ServerResponse.createBySuccess("发货成功");
+             }
+         }
+         return ServerResponse.createByErrorMessage("发货错误");
+-        
++
+     }
+ }
+ 
+diff --git a/src/main/java/com/mmall/util/FTPUtil.java b/src/main/java/com/mmall/util/FTPUtil.java
+index 18c310d..8aa5abc 100644
+--- a/src/main/java/com/mmall/util/FTPUtil.java
++++ b/src/main/java/com/mmall/util/FTPUtil.java
+@@ -1,18 +1,16 @@
+ package com.mmall.util;
+ 
++import lombok.extern.slf4j.Slf4j;
+ import org.apache.commons.net.ftp.FTPClient;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+-import sun.net.ftp.FtpClient;
+ 
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.IOException;
+ import java.util.List;
+ 
++@Slf4j
+ public class FTPUtil {
+ 
+-    private static final Logger logger = LoggerFactory.getLogger(FTPUtil.class);
+ 
+     private static String ftpIp = PropertiesUtil.getProperty("ftp.server.ip");
+     private static String ftpUser = PropertiesUtil.getProperty("ftp.user");
+@@ -34,9 +32,9 @@ public class FTPUtil {
+ 
+     public static boolean uploadFile(List<File> fileList) throws IOException {
+         FTPUtil ftpUtil = new FTPUtil(ftpIp, 21, ftpUser, ftpPass);
+-        logger.info("开始连接ftp服务器");
+-        boolean result = ftpUtil.uploadFile("/home/lj/imgupload",fileList);
+-        logger.info("结束上传，上传结果{}",result);
++        log.info("开始连接ftp服务器");
++        boolean result = ftpUtil.uploadFile("/home/lj/imgupload", fileList);
++        log.info("结束上传，上传结果{}", result);
+         return result;
+     }
+ 
+@@ -50,20 +48,20 @@ public class FTPUtil {
+                 ftpClient.setControlEncoding("UTF-8");
+                 ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+                 ftpClient.enterLocalPassiveMode();
+-                for (File fileItem:fileList){
++                for (File fileItem : fileList) {
+                     fis = new FileInputStream(fileItem);
+-                    ftpClient.storeFile(fileItem.getName(),fis);
++                    ftpClient.storeFile(fileItem.getName(), fis);
+                 }
+                 uploaded = true;
+             } catch (IOException e) {
+                 uploaded = false;
+-                logger.error("上传文件异常");
+-            }finally {
++                log.error("上传文件异常");
++            } finally {
+                 fis.close();
+                 ftpClient.disconnect();
+             }
+-        }else {
+-            logger.error("连接服务器失败");
++        } else {
++            log.error("连接服务器失败");
+         }
+         return uploaded;
+     }
+@@ -75,7 +73,7 @@ public class FTPUtil {
+             ftpClient.connect(ip);
+             isSuccess = ftpClient.login(user, pwd);
+         } catch (IOException e) {
+-            logger.error("连接FTP服务器异常");
++            log.error("连接FTP服务器异常");
+         }
+         return isSuccess;
+ 
+diff --git a/src/main/java/com/mmall/util/PropertiesUtil.java b/src/main/java/com/mmall/util/PropertiesUtil.java
+index eedd36c..ae464bb 100644
+--- a/src/main/java/com/mmall/util/PropertiesUtil.java
++++ b/src/main/java/com/mmall/util/PropertiesUtil.java
+@@ -1,46 +1,42 @@
+ package com.mmall.util;
+ 
++import lombok.extern.slf4j.Slf4j;
+ import org.apache.commons.lang3.StringUtils;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+ 
+ import java.io.IOException;
+ import java.io.InputStreamReader;
+ import java.util.Properties;
+ 
++@Slf4j
+ public class PropertiesUtil {
+-
+-    private static Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
+-
+     private static Properties props;
+ 
+     static {
+         String fileName = "mmall.properties";
+         props = new Properties();
+         try {
+-            props.load(new InputStreamReader(PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName),"UTF-8"));
++            props.load(new InputStreamReader(PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName), "UTF-8"));
+         } catch (IOException e) {
+-            logger.error("配置文件读取异常",e);
++            log.error("配置文件读取异常", e);
+         }
+     }
+ 
+-    public static String getProperty(String key){
++    public static String getProperty(String key) {
+         String value = props.getProperty(key.trim());
+-        if(StringUtils.isBlank(value)){
++        if (StringUtils.isBlank(value)) {
+             return null;
+         }
+         return value.trim();
+     }
+ 
+-    public static String getProperty(String key,String defaultValue){
++    public static String getProperty(String key, String defaultValue) {
+ 
+         String value = props.getProperty(key.trim());
+-        if(StringUtils.isBlank(value)){
++        if (StringUtils.isBlank(value)) {
+             value = defaultValue;
+         }
+         return value.trim();
+     }
+ 
+ 
+-
+ }

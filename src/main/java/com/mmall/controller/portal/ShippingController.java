@@ -8,6 +8,7 @@ import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Shipping;
 import com.mmall.pojo.User;
 import com.mmall.service.IShippingService;
+import com.mmall.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +29,8 @@ public class ShippingController {
     //Spring MVC会自动将传入的属性赋值到shipping对象中.使用了SPring MVC的对象绑定机制
     @RequestMapping("add.do")
     @ResponseBody
-    public ServerResponse add(HttpSession httpSession, Shipping shipping) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse add(HttpServletRequest request, Shipping shipping) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -40,8 +41,8 @@ public class ShippingController {
 
     @RequestMapping("update.do")
     @ResponseBody
-    public ServerResponse update(HttpSession httpSession, Shipping shipping) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse update(HttpServletRequest request, Shipping shipping) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -49,18 +50,19 @@ public class ShippingController {
         return iShippingService.update(user.getId(), shipping);
 
     }
+
     @RequestMapping("test.do")
     @ResponseBody
     public ServerResponse test(HttpServletRequest request) {
         System.out.println("支付宝回调");
-        return ServerResponse.createBySuccess("测试访问通道"+request.getParameterMap().toString());
+        return ServerResponse.createBySuccess("测试访问通道" + request.getParameterMap().toString());
 
     }
 
     @RequestMapping("del.do")
     @ResponseBody
-    public ServerResponse del(HttpSession httpSession, Integer shippingId) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse del(HttpServletRequest request, Integer shippingId) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -70,8 +72,8 @@ public class ShippingController {
 
     @RequestMapping("select.do")
     @ResponseBody
-    public ServerResponse<Shipping> select(HttpSession httpSession, Integer shippingId) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<Shipping> select(HttpServletRequest request, Integer shippingId) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -84,8 +86,8 @@ public class ShippingController {
     @ResponseBody
     public ServerResponse<PageInfo> list(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                          @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-                                         HttpSession httpSession) {
-        User user = (User) httpSession.getAttribute(Const.CURRENT_USER);
+                                         HttpServletRequest request) {
+        User user = Util.getUser(request);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
