@@ -40,6 +40,12 @@ public class Const {
 
     }
 
+    public interface CacheString{
+        String CATEGORY_CACHE = "CATEGORY_CACHE";
+        String PRODUCT_DETAIL_CACHE = "PRODUCT_DETAIL_CACHE";
+
+    }
+
     public enum OrderStatusEnum{
         CANCEL("已取消",0),
         NO_PAY("未支付",10),
