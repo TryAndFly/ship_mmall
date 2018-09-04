@@ -47,10 +47,10 @@ public class CategoryServiceImpl implements ICategoryService {
             //get insert value
             Category insertCategory = categoryMapper.selectByPrimaryKeys(id);
             Long res = CategoryCache.updateCategoryToCache(insertCategory);
-            if (res > 0){
-                return ServerResponse.createBySuccessMessage("添加品类成功");
+            if (res > 1) {
+                log.info("更新两个缓存成功");
             }
-            return ServerResponse.createBySuccessMessage("添加缓存失败");
+            return ServerResponse.createBySuccessMessage("添加品类成功");
 
         }
         return ServerResponse.createByErrorMessage("添加品类失败");
@@ -73,10 +73,10 @@ public class CategoryServiceImpl implements ICategoryService {
             Category insertCategory = categoryMapper.selectByPrimaryKeys(categoryId);
 
             Long res = CategoryCache.updateCategoryToCache(insertCategory);
-            if (res >0){
-                return ServerResponse.createBySuccessMessage("更新品类成功");
+            if (res > 1) {
+                log.info("更新两个缓存成功");
             }
-            return ServerResponse.createBySuccessMessage("更新品类缓存失败");
+            return ServerResponse.createBySuccessMessage("更新品类成功");
 
         }
 
@@ -91,8 +91,8 @@ public class CategoryServiceImpl implements ICategoryService {
         List<Category> categoryList = null;
         String categoryCache = CategoryCache.getChikdrenParallelCategoryFromCache(integer);
 
-        if (StringUtils.isNotEmpty(categoryCache)){
-            categoryList = JsonUtil.strToObj(categoryCache,List.class,Category.class);
+        if (StringUtils.isNotEmpty(categoryCache)) {
+            categoryList = JsonUtil.strToObj(categoryCache, List.class, Category.class);
             log.info("get form cache");
             return ServerResponse.createBySuccess(categoryList);
         }
@@ -101,12 +101,12 @@ public class CategoryServiceImpl implements ICategoryService {
         categoryList = categoryMapper.selectCategoryChidrenByParentId(integer);
         if (CollectionUtils.isEmpty(categoryList)) {
             log.info("未找到当前分类的子分类");
-        }else {
+        } else {
             //更新到缓存中
-            Long res = CategoryCache.updateCategoryListToCache(integer,categoryList);
-            if (res > 0 ){
+            Long res = CategoryCache.updateCategoryListToCache(integer, categoryList);
+            if (res > 0) {
                 log.info("getChikdrenParallelCategory更新缓存成功");
-            }else {
+            } else {
                 log.info("getChikdrenParallelCategory更新缓存失败");
             }
         }
@@ -127,14 +127,13 @@ public class CategoryServiceImpl implements ICategoryService {
 
         //first get from cache ,then get from db
         String res = CategoryCache.getCategoryAndChildrenByIdFromCache(categoryId);
-        if (StringUtils.isNotEmpty(res)){
-            categoryIdList = JsonUtil.strToObj(res,List.class,Integer.class);
+        if (StringUtils.isNotEmpty(res)) {
+            categoryIdList = JsonUtil.strToObj(res, List.class, Integer.class);
             log.info("get from cache");
             return ServerResponse.createBySuccess(categoryIdList);
         }
 
         findChildCategory(categorySet, categoryId);
-
 
 
         if (categoryId != null) {
@@ -144,12 +143,12 @@ public class CategoryServiceImpl implements ICategoryService {
 
         }
 
-        if (!categoryIdList.isEmpty()){
+        if (!categoryIdList.isEmpty()) {
             //todo need cache
-            Long res1 = CategoryCache.updateCategoryAndChildrenByIdToCache(categoryId,categoryIdList);
-            if (res1 > 0 ){
+            Long res1 = CategoryCache.updateCategoryAndChildrenByIdToCache(categoryId, categoryIdList);
+            if (res1 > 0) {
                 log.info("add cache success ");
-            }else {
+            } else {
                 log.info("add cache fail");
             }
         }
